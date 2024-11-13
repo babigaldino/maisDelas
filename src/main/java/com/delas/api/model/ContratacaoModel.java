@@ -23,7 +23,7 @@ public class ContratacaoModel {
     private UsuarioModel id;
 
     @ManyToOne
-    @JoinColumn(name = "servicos_idservicos", nullable = false)
+    @JoinColumn(name = "idservicos", nullable = false)
     private ServicosModel idservicos;
 
 
