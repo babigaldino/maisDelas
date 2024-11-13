@@ -36,8 +36,8 @@ public class ServicosModel {
         @Column(length = 100)
         private String categoria;
 
-        @Column(name = "favorito_idfavorito")
-        private Long favoritoId;
+        @Column(name = "idfavorito")
+        private Long idfavorito;
 
 
 
