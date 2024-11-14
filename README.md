@@ -41,9 +41,6 @@ A usuária acessa uma seção chamada primeiro impulso?, com conteúdos rápidos
 - Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
 - Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
 
-## Rentabilidade - Plano de Assinatura Único
-- A plataforma oferece um plano único e opcional, que a usuária pode aderir para ter benefícios como menor taxa nas transações, alem de ter a visibilidade destacada no match. (prestadora) ou alguns cupons de desconto para a contratação de serviços futuros (cliente).
-- sistema em que um prestador de serviços pode completar até 3 atendimentos no site sem pagar nenhuma taxa. A partir do 4º serviço, o site passa a cobrar uma porcentagem sobre os ganhos do prestador.
 
 ## Banco de dados
 ```mermaid
