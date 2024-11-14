@@ -23,8 +23,8 @@ A usuária se cadastra com informações básicas (nome, e-mail, área de atuaç
 ## Questionário Inicial (Caso seja cliente, opcional):
 Algumas perguntas rápidas sobre experiência e objetivos para ajudar a adaptar o conteúdo e as recomendações.
 
-## Trilha de Introdução Rápida (Caso seja prestadora)
-A usuária acessa uma seção chamada primeiro impulso?, com conteúdos rápidos e essenciais, por exemplo:
+## Jornada do Empreemdedor (Caso seja prestadora) (Opcional)
+A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos rápidos e essenciais, por exemplo:
 - Como se comunicar com seus clientes, Auto-Divulgação e Precificação de Serviços
 - Tarefa Prática: Ao final de cada vídeo, ela faria uma especie de quiz sobre, e no final, registraria o seu serviço utilizando o que foi visto na trilha numa especie de "Sobre Mim" 
 (Vamos usar essa tarefa da trilha como o nosso default pra definir a avaliação inicial pra quem nao tem nenhum serviço prestado)
@@ -35,14 +35,14 @@ A usuária acessa uma seção chamada primeiro impulso?, com conteúdos rápidos
 
 ## Agendamento e contratação
 - Agendamento Simplificado: Assim que um cliente faz um match, ele entra em contato com a prestadora para definir o melhor horario para ambos.
-- Troca de Mensagens Padrão: Uma vez que o agendamento é confirmado, o sistema envia uma mensagem automática com detalhes e permite uma troca rápida de mensagens para ajustes.
+- Troca de Mensagens Padrão: Uma vez que o agendamento é confirmado, o sistema envia uma mensagem automática com detalhes e fornece os dados informados no momentod o cadastro para que o contratante entre em contato.
 
 ## Avaliação e Feedback
 - Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
 - Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
 
 ## Rentabilidade - Plano de Assinatura Único
-- A plataforma oferece um plano único e opcional, que a usuária pode aderir para ter benefícios como menor taxa nas transações, alem de ter a visibilidade destacada no match. (prestadora) ou alguns cupons de desconto para a contratação de serviços futuros (cliente).
+- A plataforma oferece um plano único e opcional, que a usuária pode aderir para ter benefícios, alem de ter a visibilidade destacada no match. (prestadora) ou alguns cupons de desconto para a contratação de serviços futuros (cliente).
 - sistema em que um prestador de serviços pode completar até 3 atendimentos no site sem pagar nenhuma taxa. A partir do 4º serviço, o site passa a cobrar uma porcentagem sobre os ganhos do prestador.
 
 ## Banco de dados
