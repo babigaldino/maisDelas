@@ -19,7 +19,7 @@ public class AvaliacaoModel {
     private long idavaliacao;
 
     @OneToOne
-    @JoinColumn(name = "contratacao_idcontratacao", nullable = false)
+    @JoinColumn(name = "idcontratacao", nullable = false)
     private ContratacaoModel idcontratacao;
 
     @Column(name = "nota")

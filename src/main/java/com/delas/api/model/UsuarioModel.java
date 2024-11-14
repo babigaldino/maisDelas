@@ -49,7 +49,8 @@ public class UsuarioModel {
         @Column(name = "datacriacao", nullable = false)
         private LocalDateTime dataCriacao;
 
-
+        @Column(name = "cpf", nullable = false)
+        private String cpf;
 
 
     public enum TipoUsuario {
