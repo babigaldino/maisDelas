@@ -1,6 +1,5 @@
-package com.example.api_delas.service;
-
-import com.example.api_delas.repository.ServicosRepository;
+package com.delas.api.service;
+import com.delas.api.repository.ServicosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

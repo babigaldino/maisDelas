@@ -1,4 +1,4 @@
-package com.example.api_delas.service;
+package com.delas.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

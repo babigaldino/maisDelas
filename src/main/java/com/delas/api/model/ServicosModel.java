@@ -1,4 +1,4 @@
-package com.example.api_delas.model;
+package com.delas.api.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

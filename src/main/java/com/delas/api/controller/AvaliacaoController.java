@@ -1,5 +1,5 @@
 
-package com.example.api_delas.model;
+package com.delas.api.controller;
 import com.example.api_delas.model.AvaliacaoModel;
 import com.example.api_delas.repository.AvaliacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

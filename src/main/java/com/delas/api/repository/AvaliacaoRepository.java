@@ -1,5 +1,5 @@
-package com.example.api_delas.repository;
-import com.example.api_delas.model.AvaliacaoModel;
+package com.delas.api.repository;
+import com.delas.api.model.AvaliacaoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
