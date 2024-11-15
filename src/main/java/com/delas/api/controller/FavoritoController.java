@@ -1,13 +1,53 @@
-package com.delas.api.controller;
+package com.example.api_delas.controller;
 
+import com.example.api_delas.model.FavoritoModel;
+import com.example.api_delas.service.FavoritoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("favorito")
+@RequestMapping("/favorito")
 public class FavoritoController {
 
     @Autowired
-    private FavoritoController favoritoController;
+    private FavoritoService favoritoService;
+
+    // criar  um novo favorito
+    @PostMapping
+    public ResponseEntity<FavoritoModel> createFavorito(@RequestBody FavoritoModel favorito) {
+        FavoritoModel novoFavorito = favoritoService.save(favorito);
+        return ResponseEntity.ok(novoFavorito);
+    }
+
+    // pegar todos os favoritos
+    @GetMapping
+    public List<FavoritoModel> getAllFavoritos() {
+        return favoritoService.findAll();
+    }
+
+    // pegar um favorito pelo ID
+    @GetMapping("/{id}")
+    public ResponseEntity<FavoritoModel> getFavoritoById(@PathVariable Long id) {
+        FavoritoModel favorito = favoritoService.findById(id);
+        return favorito != null ? ResponseEntity.ok(favorito) : ResponseEntity.notFound().build();
+    }
+
+    // atualizar um favorito existente
+    @PutMapping("/{id}")
+    public ResponseEntity<FavoritoModel> updateFavorito(@PathVariable Long id, @RequestBody FavoritoModel favoritoDetails) {
+        FavoritoModel updatedFavorito = favoritoService.update(id, favoritoDetails);
+        return updatedFavorito != null ? ResponseEntity.ok(updatedFavorito) : ResponseEntity.notFound().build();
+    }
+
+    // excluir um favorito pelo ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFavorito(@PathVariable Long id) {
+        if (favoritoService.deleteById(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
