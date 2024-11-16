@@ -39,6 +39,7 @@ public class ContratacaoModel {
     private String comentarios;
 
 
-
-    }
+    public String getCampoExemplo() {
+    return null;}
+}
 

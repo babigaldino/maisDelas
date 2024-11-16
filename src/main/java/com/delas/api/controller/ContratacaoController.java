@@ -33,7 +33,7 @@ public class ContratacaoController {
     public ContratacaoModel updateContratacao(@PathVariable Long id, @RequestBody ContratacaoModel contratacaoDetails) {
         ContratacaoModel contratacao = contratacaoRepository.findById(id).orElse(null);
         if (contratacao != null) {
-            contratacao.setCampoExemplo(contratacaoDetails.getCampoExemplo()); 
+            contratacao.setComentarios(contratacaoDetails.getCampoExemplo());
             return contratacaoRepository.save(contratacao);
         }
         return null;

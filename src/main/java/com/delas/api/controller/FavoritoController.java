@@ -1,7 +1,7 @@
-package com.example.api_delas.controller;
+package com.delas.api.controller;
 
-import com.example.api_delas.model.FavoritoModel;
-import com.example.api_delas.service.FavoritoService;
+import com.delas.api.model.FavoritoModel;
+import com.delas.api.service.FavoritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

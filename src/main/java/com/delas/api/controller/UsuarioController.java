@@ -1,7 +1,6 @@
-package com.example.api_delas.controller;
-
-import com.example.api_delas.model.UsuarioModel;
-import com.example.api_delas.service.UsuarioService;
+package com.delas.api.controller;
+import com.delas.api.model.UsuarioModel;
+import com.delas.api.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     @Autowired
@@ -17,30 +16,28 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioModel> createUsuario(@RequestBody UsuarioModel usuario) {
-        return ResponseEntity.status(201).body(usuarioService.save(usuario));
+        return ResponseEntity.status(201).body(usuarioService.salvarUsuario(usuario));
     }
 
     @GetMapping
     public List<UsuarioModel> getAllUsuarios() {
-        return usuarioService.findAll();
+        return usuarioService.listarUsuarios();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioModel> getUsuarioById(@PathVariable Long id) {
-        return usuarioService.findById(id)
+        return usuarioService.buscarUsuarioPorId(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(404).build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioModel> updateUsuario(@PathVariable Long id, @RequestBody UsuarioModel usuarioDetails) {
-        return usuarioService.update(id, usuarioDetails)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).build());
+    public UsuarioModel updateUsuario(@PathVariable Long id, @RequestBody UsuarioModel usuarioDetails) {
+        return usuarioService.atualizarUsuario(id, usuarioDetails);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
-        return usuarioService.deleteById(id) ? ResponseEntity.status(204).build() : ResponseEntity.status(404).build();
+        return usuarioService.deletarUsuario(id) ? ResponseEntity.status(204).build() : ResponseEntity.status(404).build();
     }
 }

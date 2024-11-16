@@ -2,11 +2,11 @@ package com.delas.api.controller;
 
 import com.delas.api.model.ServicosModel;
 import com.delas.api.service.ServicosService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 

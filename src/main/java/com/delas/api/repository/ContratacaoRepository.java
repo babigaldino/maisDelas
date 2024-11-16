@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface ContratacaoRepository extends JpaRepository<ContratacaoModel, Long> {
 
-    List<ContratacaoModel> findByIdUsuarioId(Integer usuarioId);
+    List<ContratacaoModel> findByIdId(Integer Id);
     List<ContratacaoModel> findByIdservicosIdservicos(Long servicosId);
     List<ContratacaoModel> findByStatus(String status);
 

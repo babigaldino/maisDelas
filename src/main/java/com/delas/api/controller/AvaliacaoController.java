@@ -1,7 +1,7 @@
 
 package com.delas.api.controller;
-import com.example.api_delas.model.AvaliacaoModel;
-import com.example.api_delas.repository.AvaliacaoRepository;
+import com.delas.api.model.AvaliacaoModel;
+import com.delas.api.repository.AvaliacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -49,8 +49,12 @@ public class UsuarioService {
     }
 
     // Método para deletar um usuário pelo ID
-    public void deletarUsuario(Long id) {
+    public boolean deletarUsuario(Long id) {
         usuarioRepository.deleteById(id);
+        return false;
     }
+
+
+
 }
 

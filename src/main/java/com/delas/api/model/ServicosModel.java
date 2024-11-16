@@ -40,7 +40,6 @@ public class ServicosModel {
         private Long idfavorito;
 
 
-
 }
 
 
