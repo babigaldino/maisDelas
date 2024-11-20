@@ -37,15 +37,12 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
-        return usuarioService.deletarUsuario(id) ? ResponseEntity.status(204).build() : ResponseEntity.status(404).build();
+    public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
+        usuarioService.deletarUsuario(id);
+        return ResponseEntity.ok("Usuário com ID " + id + " foi deletado com sucesso.");
+    }
 
 
-    }
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body("{\"message\":\"API está funcionando corretamente!\"}");
-    }
+
 }
+

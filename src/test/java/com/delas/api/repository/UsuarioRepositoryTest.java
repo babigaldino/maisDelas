@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,7 @@ class UsuarioRepositoryTest {
                 "Rua das Flores",
                 "Centro",
                 "50000000",
-                LocalDateTime.now(),
+               new Date(),
                 "12345678900"
         );
 
@@ -55,7 +56,7 @@ class UsuarioRepositoryTest {
                 "Rua do Sol",
                 "Boa Viagem",
                 "51000000",
-                LocalDateTime.now(),
+                new Date(),
                 "98765432100"
         );
 
@@ -80,7 +81,7 @@ class UsuarioRepositoryTest {
                 "Rua Alegre",
                 "Madalena",
                 "52000000",
-                LocalDateTime.now(),
+              new Date(),
                 "11223344556"
         );
 
@@ -105,7 +106,7 @@ class UsuarioRepositoryTest {
                 "Rua Nova",
                 "Recife Antigo",
                 "53000000",
-                LocalDateTime.now(),
+                new Date(),
                 "99887766554"
         );
 

@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,7 @@ class ContratacaoRepositoryTest {
                 null, "Ana Costa", "ana.costa@email.com", "senha123",
                 "81999999999", UsuarioModel.TipoUsuario.CLIENTE, "Rua das Flores",
                 "Bairro das Árvores", "51000000",
-                LocalDateTime.now(), "12345678900"
+                new Date(), "12345678900"
         );
         usuario = usuarioRepository.save(usuario);
 

@@ -32,8 +32,6 @@ public class FavoritoModel {
         private LocalDateTime datafavoritamento;
 
 
-
-
-    }
+}
 
 
