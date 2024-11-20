@@ -49,7 +49,7 @@ public class UsuarioModel {
         @Column(name = "datacriacao", nullable = false)
         private LocalDateTime dataCriacao;
 
-        @Column(name = "cpf", nullable = false)
+        @Column(name = "cpf", nullable = false, unique = true)
         private String cpf;
 
 

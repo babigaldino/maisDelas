@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ContratacaoModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idcontratacao;
+    private Long idcontratacao;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)

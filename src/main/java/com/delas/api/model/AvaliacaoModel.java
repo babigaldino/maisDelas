@@ -16,7 +16,7 @@ public class AvaliacaoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idavaliacao;
+    private Long idavaliacao;
 
     @OneToOne
     @JoinColumn(name = "idcontratacao", nullable = false)
