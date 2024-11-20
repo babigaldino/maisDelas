@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Setter
 @Getter
@@ -46,8 +47,9 @@ public class UsuarioModel {
         @Column(name = "cep", length = 20)
         private String cep;
 
-        @Column(name = "datacriacao", nullable = false)
-        private LocalDateTime dataCriacao;
+        @Column(nullable = false, updatable = false)
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date datacriacao = new Date(); // Gera a data automaticamente;
 
         @Column(name = "cpf", nullable = false, unique = true)
         private String cpf;

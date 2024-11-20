@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ class FavoritoRepositoryTest {
         UsuarioModel usuario = new UsuarioModel(
                 null, "João Silva", "joao@email.com", "senha123",
                 "81999999999", UsuarioModel.TipoUsuario.CLIENTE, "Rua A", "Bairro B",
-                "50000000", LocalDateTime.now(), "12345678901"
+                "50000000", new Date(), "12345678901"
         );
         UsuarioModel usuarioSalvo = usuarioRepository.save(usuario);
 
@@ -64,12 +65,12 @@ class FavoritoRepositoryTest {
         UsuarioModel usuario1 = new UsuarioModel(
                 null, "João Silva", "joao@email.com", "senha123",
                 "81999999999", UsuarioModel.TipoUsuario.CLIENTE, "Rua A", "Bairro B",
-                "50000000", LocalDateTime.now(), "12345678901"
+                "50000000", new Date(), "12345678901"
         );
         UsuarioModel usuario2 = new UsuarioModel(
                 null, "Maria Souza", "maria@email.com", "senha456",
                 "81988888888", UsuarioModel.TipoUsuario.CLIENTE, "Rua C", "Bairro D",
-                "52000000", LocalDateTime.now(), "98765432100"
+                "52000000", new Date(), "98765432100"
         );
         usuarioRepository.save(usuario1);
         usuarioRepository.save(usuario2);
@@ -103,7 +104,7 @@ class FavoritoRepositoryTest {
         UsuarioModel usuario = new UsuarioModel(
                 null, "João Silva", "joao@email.com", "senha123",
                 "81999999999", UsuarioModel.TipoUsuario.CLIENTE, "Rua A", "Bairro B",
-                "50000000", LocalDateTime.now(), "12345678901"
+                "50000000", new Date(), "12345678901"
         );
         UsuarioModel usuarioSalvo = usuarioRepository.save(usuario);
 

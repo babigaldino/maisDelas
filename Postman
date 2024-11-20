@@ -1,0 +1,37 @@
+POST - USUARIO
+
+{
+  "nome": "João Oliveira",
+  "email": "joao.oliveira@email.com",
+  "senha": "senha123",
+  "telefone": "81999999999",
+  "tipo": "CLIENTE",
+  "rua": "Rua A",
+  "bairro": "Bairro B",
+  "cep": "50000000",
+  "datacriacao": "2024-11-20T00:00:00",
+  "cpf": "12345678901"
+}
+
+
+PUT - USUARIO
+http://localhost:8080/usuario/1
+
+{
+    "nome": "Novo Nome",
+    "email": "novo.email@email.com",
+    "senha": "senha223",
+    "telefone": "81999999999",
+    "tipo": "ADMIN",
+    "rua": "Nova Rua",
+    "bairro": "Novo Bairro",
+    "cep": "51000000",
+    "cpf": "98765432100"
+}
+
+DELETE - USUARIO
+
+http://localhost:8080/usuario/1
+
+mensagem esperada = "usuario com id + id deletado com sucesso"
+

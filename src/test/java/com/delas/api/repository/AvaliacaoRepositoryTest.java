@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +45,7 @@ class AvaliacaoRepositoryTest {
 
         null, "João Oliveira", "joao.oliveira@email.com", "senha123",
                 "81977777777", UsuarioModel.TipoUsuario.CLIENTE, "Rua A", "Bairro B",
-                "52000000", LocalDateTime.now(), "12345678900");
+                "52000000", new Date(), "12345678900");
 
        ServicosModel servico = new ServicosModel(
                 null, // O id será gerado automaticamente
