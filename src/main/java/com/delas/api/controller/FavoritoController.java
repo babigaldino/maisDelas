@@ -1,6 +1,9 @@
 package com.delas.api.controller;
-
 import com.delas.api.model.FavoritoModel;
+import com.delas.api.model.ServicosModel;
+import com.delas.api.model.UsuarioModel;
+import com.delas.api.repository.ServicosRepository;
+import com.delas.api.repository.UsuarioRepository;
 import com.delas.api.service.FavoritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +18,38 @@ public class FavoritoController {
     @Autowired
     private FavoritoService favoritoService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ServicosRepository servicosRepository;
+
     // criar  um novo favorito
     @PostMapping
     public ResponseEntity<FavoritoModel> createFavorito(@RequestBody FavoritoModel favorito) {
+        // Valida se os IDs estão presentes
+        if (favorito.getUsuarioFavorito() == null || favorito.getUsuarioFavorito().getId() == null) {
+            throw new IllegalArgumentException("ID do usuário é obrigatório.");
+        }
+        if (favorito.getServicoFavorito() == null || favorito.getServicoFavorito().getIdservicos() == null) {
+            throw new IllegalArgumentException("ID do serviço é obrigatório.");
+        }
+
+        // Busca os registros no banco
+        UsuarioModel usuario = usuarioRepository.findById(favorito.getUsuarioFavorito().getId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        ServicosModel servico = servicosRepository.findById(favorito.getServicoFavorito().getIdservicos())
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+
+        // Associa as entidades ao favorito
+        favorito.setUsuarioFavorito(usuario);
+        favorito.setServicoFavorito(servico);
+
+        // Salva no banco
         FavoritoModel novoFavorito = favoritoService.save(favorito);
         return ResponseEntity.ok(novoFavorito);
     }
+
+
 
     // pegar todos os favoritos
     @GetMapping

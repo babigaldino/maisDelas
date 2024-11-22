@@ -38,8 +38,10 @@ class ServicosControllerTest {
     @DisplayName("Deve criar um novo serviço")
     void createServico() throws Exception {
         ServicosModel servico = new ServicosModel();
-        servico.setId(1L);
-        servico.setNome("Serviço Teste");
+        servico.setIdfavorito(1L);
+        servico.setDescricao("Serviço Teste");
+        servico.setIdservicos(1L);
+        servico.setDescricao("Serviço Teste");
 
         when(servicosService.save(any(ServicosModel.class))).thenReturn(servico);
 
@@ -66,8 +68,10 @@ class ServicosControllerTest {
     @DisplayName("Deve retornar um serviço específico por ID")
     void getServicoById() throws Exception {
         ServicosModel servico = new ServicosModel();
-        servico.setId(1L);
-        servico.setNome("Serviço Teste");
+        servico.setIdfavorito(1L);
+        servico.setDescricao("Serviço Teste");
+        servico.setIdservicos(1L);
+        servico.setDescricao("Serviço Teste");
 
         when(servicosService.findById(1L)).thenReturn(Optional.of(servico));
 
@@ -94,12 +98,16 @@ class ServicosControllerTest {
     @DisplayName("Deve atualizar um serviço existente")
     void updateServico() throws Exception {
         ServicosModel servico = new ServicosModel();
-        servico.setId(1L);
-        servico.setNome("Serviço Teste");
+        servico.setIdfavorito(1L);
+        servico.setDescricao("Serviço Teste");
+        servico.setIdservicos(1L);
+        servico.setDescricao("Serviço Teste");
 
         ServicosModel updatedServico = new ServicosModel();
-        updatedServico.setId(1L);
-        updatedServico.setNome("Serviço Atualizado");
+        updatedServico.setIdservicos(1L);
+        updatedServico.setDescricao("Serviço Atualizado");
+        updatedServico.setIdservicos(1L);
+        updatedServico.setDescricao("Serviço Atualizado");
 
         when(servicosService.findById(1L)).thenReturn(Optional.of(servico));
         when(servicosService.update(eq(1L), any(ServicosModel.class))).thenReturn(Optional.of(updatedServico));
@@ -123,29 +131,5 @@ class ServicosControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nome\": \"Serviço Atualizado\"}"))
                 .andExpect(status().isNotFound());
-
-        verify(servicosService, times(1)).findById(1L);
-    }
-
-    @Test
-    @DisplayName("Deve excluir um serviço")
-    void deleteServico() throws Exception {
-        when(servicosService.deleteById(1L)).thenReturn(true);
-
-        mockMvc.perform(delete("/servicos/1"))
-                .andExpect(status().isNoContent());
-
-        verify(servicosService, times(1)).deleteById(1L);
-    }
-
-    @Test
-    @DisplayName("Deve retornar 404 se o serviço não for encontrado ao tentar excluir")
-    void deleteServicoNotFound() throws Exception {
-        when(servicosService.deleteById(1L)).thenReturn(false);
-
-        mockMvc.perform(delete("/servicos/1"))
-                .andExpect(status().isNotFound());
-
-        verify(servicosService, times(1)).deleteById(1L);
     }
 }

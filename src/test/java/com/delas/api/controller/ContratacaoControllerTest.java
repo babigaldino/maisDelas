@@ -1,4 +1,6 @@
-package com.delas.api.controller;
+
+
+        package com.delas.api.controller;
 
 import com.delas.api.model.ContratacaoModel;
 import com.delas.api.repository.ContratacaoRepository;
@@ -12,8 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+        import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+        import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ContratacaoControllerTest {
 
@@ -35,8 +37,8 @@ class ContratacaoControllerTest {
     @DisplayName("Deve criar uma nova contratação")
     void createContratacao() throws Exception {
         ContratacaoModel contratacao = new ContratacaoModel();
-        contratacao.setId(1L);
-        contratacao.setCampoExemplo("Comentário de exemplo");
+        contratacao.setIdcontratacao(1L);
+        contratacao.setComentarios("Comentário de exemplo");
 
         when(contratacaoRepository.save(any(ContratacaoModel.class))).thenReturn(contratacao);
 
@@ -63,8 +65,8 @@ class ContratacaoControllerTest {
     @DisplayName("Deve retornar uma contratação pelo ID")
     void getContratacaoById() throws Exception {
         ContratacaoModel contratacao = new ContratacaoModel();
-        contratacao.setId(1L);
-        contratacao.setCampoExemplo("Comentário de exemplo");
+        contratacao.setIdcontratacao(1L);
+        contratacao.setComentarios("Comentário de exemplo");
 
         when(contratacaoRepository.findById(1L)).thenReturn(java.util.Optional.of(contratacao));
 
@@ -91,12 +93,12 @@ class ContratacaoControllerTest {
     @DisplayName("Deve atualizar uma contratação existente")
     void updateContratacao() throws Exception {
         ContratacaoModel contratacao = new ContratacaoModel();
-        contratacao.setId(1L);
-        contratacao.setCampoExemplo("Comentário de exemplo");
+        contratacao.setIdcontratacao(1L);
+        contratacao.setComentarios("Comentário de exemplo");
 
         ContratacaoModel updatedContratacao = new ContratacaoModel();
-        updatedContratacao.setId(1L);
-        updatedContratacao.setCampoExemplo("Comentário atualizado");
+        updatedContratacao.setIdcontratacao(1L);
+        updatedContratacao.setComentarios("Comentário atualizado");
 
         when(contratacaoRepository.findById(1L)).thenReturn(java.util.Optional.of(contratacao));
         when(contratacaoRepository.save(any(ContratacaoModel.class))).thenReturn(updatedContratacao);

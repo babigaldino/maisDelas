@@ -1,11 +1,9 @@
 package com.delas.api.model;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -59,6 +57,20 @@ public class UsuarioModel {
         ADMIN,
         CLIENTE,
         PRESTADOR
+    }
+    public static UsuarioModel criarUsuarioExemplo() {
+        UsuarioModel usuario = new UsuarioModel();
+        usuario.setNome("João da Silva");
+        usuario.setEmail("joao.silva@email.com");
+        usuario.setSenha("senha123");
+        usuario.setTelefone("1234567890");
+        usuario.setTipo(TipoUsuario.CLIENTE);
+        usuario.setRua("Rua Exemplo");
+        usuario.setBairro("Bairro Teste");
+        usuario.setCep("12345-678");
+        usuario.setDatacriacao(new Date());
+        usuario.setCpf("123.456.789-00");
+        return usuario;
     }
 }
 
