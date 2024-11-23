@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "contratacao")
 public class ContratacaoModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idcontratacao;
@@ -32,14 +33,12 @@ public class ContratacaoModel {
 
 
     @Column(name = "datacriacao", nullable = false)
-    private LocalDateTime dataContratacao;
+    private LocalDateTime dataContratacao = LocalDateTime.now();
 
 
     @Column(name = "comentarios", nullable = false)
     private String comentarios;
-
-
-    public String getCampoExemplo() {
-    return null;}
 }
+
+
 

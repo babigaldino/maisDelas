@@ -1,6 +1,8 @@
 package com.delas.api.controller;
 
 import com.delas.api.model.FavoritoModel;
+import com.delas.api.model.ServicosModel;
+import com.delas.api.model.UsuarioModel;
 import com.delas.api.service.FavoritoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Date;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,12 +36,28 @@ class FavoritoControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(favoritoController).build();
     }
 
+    UsuarioModel usuario = new UsuarioModel(
+            null,
+            "João Santos",
+            "joao@email.com",
+            "senha456",
+            "81988888888",
+            UsuarioModel.TipoUsuario.PRESTADOR,
+            "Rua do Sol",
+            "Boa Viagem",
+            "51000000",
+            new Date(),
+            "98765432100"
+    );
+
     @Test
     @DisplayName("Deve criar um novo favorito")
     void createFavorito() throws Exception {
         FavoritoModel favorito = new FavoritoModel();
-        favorito.setId(1L);
-        favorito.setNome("Produto Favorito");
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
 
         when(favoritoService.save(any(FavoritoModel.class))).thenReturn(favorito);
 
@@ -64,8 +84,10 @@ class FavoritoControllerTest {
     @DisplayName("Deve retornar um favorito pelo ID")
     void getFavoritoById() throws Exception {
         FavoritoModel favorito = new FavoritoModel();
-        favorito.setId(1L);
-        favorito.setNome("Produto Favorito");
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
 
         when(favoritoService.findById(1L)).thenReturn(favorito);
 
@@ -92,12 +114,16 @@ class FavoritoControllerTest {
     @DisplayName("Deve atualizar um favorito existente")
     void updateFavorito() throws Exception {
         FavoritoModel favorito = new FavoritoModel();
-        favorito.setId(1L);
-        favorito.setNome("Produto Favorito");
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
+        favorito.setIdfavorito(1L);
+        favorito.setUsuarioFavorito(null);
 
         FavoritoModel updatedFavorito = new FavoritoModel();
-        updatedFavorito.setId(1L);
-        updatedFavorito.setNome("Produto Atualizado");
+        updatedFavorito.setIdfavorito(1L);
+        updatedFavorito.setUsuarioFavorito(null);
+        updatedFavorito.setIdfavorito(1L);
+        updatedFavorito.setUsuarioFavorito(null);
 
         when(favoritoService.update(eq(1L), any(FavoritoModel.class))).thenReturn(updatedFavorito);
 

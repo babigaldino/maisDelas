@@ -31,13 +31,29 @@ public class ContratacaoController {
 
     @PutMapping("/{id}")
     public ContratacaoModel updateContratacao(@PathVariable Long id, @RequestBody ContratacaoModel contratacaoDetails) {
-        ContratacaoModel contratacao = contratacaoRepository.findById(id).orElse(null);
-        if (contratacao != null) {
-            contratacao.setComentarios(contratacaoDetails.getCampoExemplo());
-            return contratacaoRepository.save(contratacao);
+        ContratacaoModel contratacao = contratacaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
+
+        // Atualize apenas os campos não nulos da requisição
+        if (contratacaoDetails.getComentarios() != null) {
+            contratacao.setComentarios(contratacaoDetails.getComentarios());
         }
-        return null;
+        if (contratacaoDetails.getDataContratacao() != null) {
+            contratacao.setDataContratacao(contratacaoDetails.getDataContratacao());
+        }
+        if (contratacaoDetails.getId() != null) {
+            contratacao.setId(contratacaoDetails.getId());
+        }
+        if (contratacaoDetails.getIdservicos() != null) {
+            contratacao.setIdservicos(contratacaoDetails.getIdservicos());
+        }
+        if (contratacaoDetails.getStatus() != null) {
+            contratacao.setStatus(contratacaoDetails.getStatus());
+        }
+
+        return contratacaoRepository.save(contratacao);
     }
+
 
     @DeleteMapping("/{id}")
     public void deleteContratacao(@PathVariable Long id) {
@@ -46,4 +62,4 @@ public class ContratacaoController {
 }
 
 
-//
+
