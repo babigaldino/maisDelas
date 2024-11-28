@@ -20,9 +20,6 @@ Autonomia: Proporcionar às mulheres a capacidade de gerenciar seu próprio temp
 ## Cadastro
 A usuária se cadastra com informações básicas (nome, e-mail, área de atuação) e cria uma senha.
 
-## Questionário Inicial (Caso seja cliente, opcional):
-Algumas perguntas rápidas sobre experiência e objetivos para ajudar a adaptar o conteúdo e as recomendações.
-
 ## Jornada do Empreemdedor (Caso seja prestadora) (Opcional)
 A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos rápidos e essenciais, por exemplo:
 - Como se comunicar com seus clientes, Auto-Divulgação e Precificação de Serviços
@@ -31,19 +28,13 @@ A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos r�
 
 ## Criação de Perfil: 
 - Perfil Básico: A usuária monta um perfil com as informações obtidas nas atividades da trilha.
-- Portfólio Inicial: Caso houver, ela pode adicionar trabalhos anteriores ou feedbacks de clientes que ela teve antes do +Delas, por exemplo.
 
 ## Agendamento e contratação
-- Agendamento Simplificado: Assim que um cliente faz um match, ele entra em contato com a prestadora para definir o melhor horario para ambos.
-- Troca de Mensagens Padrão: Uma vez que o agendamento é confirmado, o sistema envia uma mensagem automática com detalhes e fornece os dados informados no momentod o cadastro para que o contratante entre em contato.
+- Agendamento Simplificado: Assim que um cliente encontra o serviço desejado e prestadora, ele entra em contato com a mesma para definir o melhor horario para ambos.
 
 ## Avaliação e Feedback
 - Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
 - Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
-
-## Rentabilidade - Plano de Assinatura Único
-- A plataforma oferece um plano único e opcional, que a usuária pode aderir para ter benefícios, alem de ter a visibilidade destacada no match. (prestadora) ou alguns cupons de desconto para a contratação de serviços futuros (cliente).
-- sistema em que um prestador de serviços pode completar até 3 atendimentos no site sem pagar nenhuma taxa. A partir do 4º serviço, o site passa a cobrar uma porcentagem sobre os ganhos do prestador.
 
 ## Banco de dados
 ```mermaid
