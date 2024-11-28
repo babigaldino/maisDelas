@@ -41,6 +41,10 @@ A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos r�
 
 ![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/+Delas%20(3).jpg?raw=true)
 
+- ## Fluxos de Dados da Contratação do serviço.
+  
+ ![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/+Delas%20(3).jpg?raw=true)
+
   
 ## Banco de dados
 ```mermaid
