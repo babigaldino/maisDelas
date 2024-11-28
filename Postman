@@ -51,7 +51,7 @@ PUT - SERVICOS
 http://localhost:8080/servicos/1
 
 {
-  "descricao": "Serviço de pintura residencial atualizado",
+  "descricao": "Serviço de pintura residencial",
   "preco": 200.00,
   "titulo": "Pintura Residencial",
   "datacriacao": "2024-11-20T00:00:00",

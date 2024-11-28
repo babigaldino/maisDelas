@@ -1,8 +1,10 @@
 package com.delas.api.service;
+import com.delas.api.dto.AvaliacaoDTO;
 import com.delas.api.model.AvaliacaoModel;
 import com.delas.api.repository.AvaliacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +12,17 @@ import java.util.Optional;
 public class AvaliacaoService {
     @Autowired private AvaliacaoRepository avaliacaoRepository;
 
+    public AvaliacaoDTO converterParaDTO(AvaliacaoModel avaliacao) {
+        // Dados do banco
+        int nota = avaliacao.getNota();
+
+        // Dados gerados dinamicamente
+        String comentario = "Comentário gerado para a avaliação " + avaliacao.getIdavaliacao();
+        String nomeCliente = "Cliente padrão"; // Pode ser fixo ou buscado de outro local
+        LocalDate dataAvaliacao = LocalDate.now(); // Atribuindo a data atual
+
+        return new AvaliacaoDTO(nota, comentario, nomeCliente, dataAvaliacao);
+    }
 
 
     // salvar uma nova avaliação

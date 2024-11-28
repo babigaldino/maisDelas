@@ -27,7 +27,6 @@ public class ContratacaoService {
             return contratacaoRepository.findById(id);
         }
 
-
         // Método para deletar um serviço pelo ID
         public boolean deleteById(Long id) {
             if (contratacaoRepository.existsById(id)) {

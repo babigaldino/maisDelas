@@ -1,10 +1,11 @@
 package com.delas.api.controller;
+import com.delas.api.dto.UsuarioDTO;
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -15,8 +16,10 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<UsuarioModel> createUsuario(@RequestBody UsuarioModel usuario) {
-        return ResponseEntity.status(201).body(usuarioService.salvarUsuario(usuario));
+    @ResponseStatus(HttpStatus.CREATED)
+    public UsuarioModel criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        // Criação do usuário chamando o serviço
+        return usuarioService.criarUsuario(usuarioDTO);
     }
 
     @GetMapping
@@ -45,4 +48,3 @@ public class UsuarioController {
 
 
 }
-
