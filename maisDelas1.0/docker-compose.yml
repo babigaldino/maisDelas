@@ -1,0 +1,41 @@
+
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: apresentacao
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    networks:
+      - springboot-network
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: always
+
+  spring-boot-api:
+    image: spring-boot-api
+    container_name: spring-boot-api-v2
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb-container:3306/apresentacao
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - springboot-network
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mariadb
+    restart: always
+
+networks:
+  springboot-network:
+    driver: bridge
+
+volumes:
+  mariadb-data:
+    driver: local

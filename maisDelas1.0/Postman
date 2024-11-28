@@ -1,0 +1,124 @@
+POST - USUARIO
+
+{
+  "nome": "João Oliveira",
+  "email": "joao.oliveira@email.com",
+  "senha": "senha123",
+  "telefone": "81999999999",
+  "tipo": "CLIENTE",
+  "rua": "Rua A",
+  "bairro": "Bairro B",
+  "cep": "50000000",
+  "datacriacao": "2024-11-20T00:00:00",
+  "cpf": "12345678901"
+}
+
+
+PUT - USUARIO
+http://localhost:8080/usuario/1
+
+{
+    "nome": "Novo Nome",
+    "email": "novo.email@email.com",
+    "senha": "senha223",
+    "telefone": "81999999999",
+    "tipo": "ADMIN",
+    "rua": "Nova Rua",
+    "bairro": "Novo Bairro",
+    "cep": "51000000",
+    "cpf": "98765432100"
+}
+
+DELETE - USUARIO
+
+http://localhost:8080/usuario/1
+
+mensagem esperada = "usuario com id + id deletado com sucesso"
+
+
+POST - SERVICOS
+
+{
+  "descricao": "Serviço de limpeza residencial",
+  "preco": 150.00,
+  "titulo": "Limpeza Residencial",
+  "datacriacao": "2024-11-20T00:00:00",
+  "categoria": "Limpeza",
+  "idfavorito": 1
+}
+
+PUT - SERVICOS
+http://localhost:8080/servicos/1
+
+{
+  "descricao": "Serviço de pintura residencial atualizado",
+  "preco": 200.00,
+  "titulo": "Pintura Residencial",
+  "datacriacao": "2024-11-20T00:00:00",
+  "categoria": "Pintura",
+  "idfavorito": 2
+}
+
+DELETE SERVICES
+http://localhost:8080/servicos/1
+
+POST - FAVORITO
+{
+  "usuarioFavorito": {
+    "id": 2
+  },
+  "servicoFavorito": {
+    "idservicos": 4
+  },
+  "datafavoritamento": "2024-11-20T00:00:00"
+}
+
+DELETE - FAVORITO
+http://localhost:8080/favorito/id
+
+
+POST - CONTRATACAO
+
+{
+    "id": {
+        "id": 1
+    },
+    "idservicos": {
+        "idservicos": 1
+    },
+    "status": "pendente",
+    "datacriacao": "2024-11-22T12:00:00",
+    "comentarios": "Primeira contratação teste"
+}
+
+PUT - CONTRATACAO
+
+{
+    "comentarios": "Teste",
+    "datacriacao": "2024-11-22T00:00:00",
+    "id": {
+        "id": 1
+    },
+    "idservicos": {
+        "idservicos": 1
+    },
+    "status": "Em andamento"
+}
+
+POST - Avaliacao
+
+{
+  "idcontratacao": {
+    "idcontratacao": 3
+  },
+  "nota": 5
+}
+
+PUT - AVALIAÇÂO
+
+{
+  "idcontratacao": {
+    "idcontratacao": 1
+  },
+  "nota": 4
+}
