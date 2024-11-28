@@ -36,6 +36,11 @@ A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos r�
 - Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
 - Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
 
+- ## Fluxos de Dados
+- Os diagramas acima representam os principais fluxos operacionais da plataforma +delas, detalhando tanto a experiência dos usuários (clientes e prestadoras de serviços) quanto as conexões internas entre as entidades do banco de dados, desde o cadastro ate a finalização do serviço contratado.
+
+https://github.com/babil0nia/maisDelas/blob/master/+Delas%20(3).jpg?raw=true
+  
 ## Banco de dados
 ```mermaid
 erDiagram
