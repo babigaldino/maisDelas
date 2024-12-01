@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component  // Adiciona a anotação @Component para registrar como bean do Spring
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "your_very_secret_and_long_key_that_is_256_bits_long!!"; // Exemplo de chave longa com 256 bits
+    private static final String SECRET_KEY = "your_very_secret_and_long_key_that_is_256_bits_long"; // Exemplo de chave longa com 256 bits
 
 
     // Método para gerar o token JWT

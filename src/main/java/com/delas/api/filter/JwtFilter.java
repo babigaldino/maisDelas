@@ -2,6 +2,7 @@ package com.delas.api.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,13 +14,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.util.Collections;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
-    private final String SECRET_KEY = "sua_chave_secreta_super_segura"; // A chave secreta para validação do token
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -33,20 +34,17 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
-                // Parse do JWT para extrair as claims
+                // A chave secreta para validação do token
+                String SECRET_KEY = "your_very_secret_and_long_key_that_is_256_bits_long";
+                SecretKey key = new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(SECRET_KEY)
+                        .setSigningKey(key) // Use o mesmo formato de chave usada na geração
                         .build()
                         .parseClaimsJws(jwt)
                         .getBody();
-
-                username = claims.getSubject(); // Obtem o nome de usuário
-            } catch (SignatureException e) {
-                // Caso o token seja inválido
-                System.out.println("Token inválido: " + e.getMessage());
+                username = claims.getSubject();
             } catch (Exception e) {
-                // Captura de outras exceções
-                System.out.println("Erro ao processar o token: " + e.getMessage());
+                System.out.println("Erro ao validar o token: " + e.getMessage());
             }
         }
 
