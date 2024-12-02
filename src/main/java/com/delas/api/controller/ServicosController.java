@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/servicos")
@@ -31,35 +30,69 @@ public class ServicosController {
         if (servicos.isEmpty()) {
             return ResponseEntity.noContent().build(); // Código 204 se não houver serviços
         }
-        return ResponseEntity.ok(servicos);
+        return ResponseEntity.ok(servicos); // Código 200
+    }
+
+    // Obter serviços ordenados por nota
+    @GetMapping("/ordenados-por-nota")
+    public ResponseEntity<List<ServicosModel>> getServicosOrdenadosPorNota(@RequestParam(defaultValue = "false") boolean ascending) {
+        List<ServicosModel> servicosOrdenados = servicosService.findAllOrderByNota(ascending);
+        if (servicosOrdenados.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Código 204 se não houver serviços
+        }
+        return ResponseEntity.ok(servicosOrdenados); // Código 200
     }
 
     // Obter um serviço específico por ID
     @GetMapping("/{id}")
     public ResponseEntity<ServicosModel> getServicoById(@PathVariable Long id) {
-        Optional<ServicosModel> servico = servicosService.findById(id);
-        return servico
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(404).body(null)); // Código 404 se não encontrar
+        try {
+            ServicosModel servico = servicosService.findById(id);
+            return ResponseEntity.ok(servico); // Código 200 para sucesso
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null); // Código 404 se não encontrar
+        }
     }
 
     // Atualizar um serviço
     @PutMapping("/{id}")
     public ResponseEntity<ServicosModel> updateServico(@PathVariable Long id, @Valid @RequestBody ServicosModel servicoDetails) {
-        Optional<ServicosModel> updatedServico = servicosService.update(id, servicoDetails);
-        return updatedServico
-                .map(ResponseEntity::ok) // Código 200 para sucesso
-                .orElseGet(() -> ResponseEntity.status(404).body(null)); // Código 404 se não encontrar
+        try {
+            ServicosModel updatedServico = servicosService.update(id, servicoDetails);
+            return ResponseEntity.ok(updatedServico); // Código 200 para sucesso
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).build(); // Código 404 se não encontrar
+        }
+    }
+
+    // Atualizar apenas a nota de um serviço
+    @PatchMapping("/{id}/nota")
+    public ResponseEntity<ServicosModel> updateNotaServico(@PathVariable Long id, @RequestParam Double nota) {
+        try {
+            ServicosModel updatedServico = servicosService.updateNota(id, nota);
+            return ResponseEntity.ok(updatedServico); // Código 200 para sucesso
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(null); // Código 400 se a nota estiver fora do intervalo
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).build(); // Código 404 se não encontrar
+        }
+    }
+    // Buscar serviços por categoria (com suporte a busca parcial)
+    @GetMapping("/categoria")
+    public ResponseEntity<List<ServicosModel>> getServicosByCategoria(@RequestParam String categoria) {
+        List<ServicosModel> servicos = servicosService.findByCategoriaContaining(categoria);
+        if (servicos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Código 204 se não encontrar resultados
+        }
+        return ResponseEntity.ok(servicos);
     }
 
     // Deletar um serviço
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteServico(@PathVariable Long id) {
         boolean isDeleted = servicosService.deleteById(id);
-        if (isDeleted) {
-            return ResponseEntity.status(204).build(); // Código 204 para sucesso (sem conteúdo)
-        } else {
-            return ResponseEntity.status(404).build(); // Código 404 se não encontrar
-        }
+        return isDeleted
+                ? ResponseEntity.status(204).build() // Código 204 para sucesso (sem conteúdo)
+                : ResponseEntity.status(404).build(); // Código 404 se não encontrar
     }
 }

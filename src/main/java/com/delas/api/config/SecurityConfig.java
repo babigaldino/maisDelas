@@ -27,8 +27,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs REST
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Libera todos os endpoints do AuthController
-                        .anyRequest().authenticated() // Exige autenticação para qualquer outra rota
+                        // Libera todos os endpoints do AuthController
+                        .requestMatchers("/auth/**").permitAll()
+                        // Libera os endpoints do Swagger para acesso sem autenticação
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        // Exige autenticação para qualquer outra rota
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Define que a sessão será stateless
