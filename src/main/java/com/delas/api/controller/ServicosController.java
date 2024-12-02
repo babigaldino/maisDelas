@@ -77,7 +77,8 @@ public class ServicosController {
             return ResponseEntity.status(404).build(); // Código 404 se não encontrar
         }
     }
-    // Buscar serviços por categoria (com suporte a busca parcial)
+
+    // Buscar serviços por categoria (com suporte a busca parcial) - Nova funcionalidade
     @GetMapping("/categoria")
     public ResponseEntity<List<ServicosModel>> getServicosByCategoria(@RequestParam String categoria) {
         List<ServicosModel> servicos = servicosService.findByCategoriaContaining(categoria);

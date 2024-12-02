@@ -16,13 +16,11 @@ public class ServicosService {
     @Autowired
     private ServicosRepository servicosRepository;
 
-
-
-
     // Método para salvar um novo serviço
     public ServicosModel save(ServicosModel servico) {
         return servicosRepository.save(servico);
     }
+
     // Método para buscar serviços por categoria (com suporte a busca parcial)
     public List<ServicosModel> findByCategoriaContaining(String categoria) {
         return servicosRepository.findByCategoriaContainingIgnoreCase(categoria);
@@ -76,9 +74,9 @@ public class ServicosService {
         servico.setDescricao(servicoDetails.getDescricao());
         servico.setPreco(servicoDetails.getPreco());
         servico.setTitulo(servicoDetails.getTitulo());
-        servico.setDatacriacao(servicoDetails.getDatacriacao());
+        servico.setDatacriacao(servicoDetails.getDatacriacao());  // Corrigido para 'setDatacriacao'
         servico.setCategoria(servicoDetails.getCategoria());
-        servico.setIdfavorito(servicoDetails.getIdfavorito());
+        servico.setIdfavorito(servicoDetails.getIdfavorito());  // Corrigido para 'setIdfavorito'
         servico.setNota(servicoDetails.getNota()); // Atualiza a nota
         return servicosRepository.save(servico);
     }

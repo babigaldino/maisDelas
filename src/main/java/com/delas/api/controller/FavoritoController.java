@@ -1,4 +1,5 @@
 package com.delas.api.controller;
+
 import com.delas.api.model.FavoritoModel;
 import com.delas.api.model.ServicosModel;
 import com.delas.api.model.UsuarioModel;
@@ -20,16 +21,18 @@ public class FavoritoController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     @Autowired
     private ServicosRepository servicosRepository;
 
-    // criar  um novo favorito
+    // Criar um novo favorito
     @PostMapping
     public ResponseEntity<FavoritoModel> createFavorito(@RequestBody FavoritoModel favorito) {
         // Valida se os IDs estão presentes
         if (favorito.getUsuarioFavorito() == null || favorito.getUsuarioFavorito().getId() == null) {
             throw new IllegalArgumentException("ID do usuário é obrigatório.");
         }
+        // A diferença aqui: no segundo código, o ID do serviço é acessado com 'getIdservicos()'
         if (favorito.getServicoFavorito() == null || favorito.getServicoFavorito().getIdservicos() == null) {
             throw new IllegalArgumentException("ID do serviço é obrigatório.");
         }
@@ -37,6 +40,8 @@ public class FavoritoController {
         // Busca os registros no banco
         UsuarioModel usuario = usuarioRepository.findById(favorito.getUsuarioFavorito().getId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // A diferença aqui: no segundo código, o ID do serviço é acessado com 'getIdservicos()'
         ServicosModel servico = servicosRepository.findById(favorito.getServicoFavorito().getIdservicos())
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
 
@@ -49,29 +54,27 @@ public class FavoritoController {
         return ResponseEntity.ok(novoFavorito);
     }
 
-
-
-    // pegar todos os favoritos
+    // Pegar todos os favoritos
     @GetMapping
     public List<FavoritoModel> getAllFavoritos() {
         return favoritoService.findAll();
     }
 
-    // pegar um favorito pelo ID
+    // Pegar um favorito pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<FavoritoModel> getFavoritoById(@PathVariable Long id) {
         FavoritoModel favorito = favoritoService.findById(id);
         return favorito != null ? ResponseEntity.ok(favorito) : ResponseEntity.notFound().build();
     }
 
-    // atualizar um favorito existente
+    // Atualizar um favorito existente
     @PutMapping("/{id}")
     public ResponseEntity<FavoritoModel> updateFavorito(@PathVariable Long id, @RequestBody FavoritoModel favoritoDetails) {
         FavoritoModel updatedFavorito = favoritoService.update(id, favoritoDetails);
         return updatedFavorito != null ? ResponseEntity.ok(updatedFavorito) : ResponseEntity.notFound().build();
     }
 
-    // excluir um favorito pelo ID
+    // Excluir um favorito pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavorito(@PathVariable Long id) {
         if (favoritoService.deleteById(id)) {
