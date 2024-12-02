@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
+import com.delas.api.service.TokenRedefinicaoSenhaService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import com.delas.api.config.JwtUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,7 +41,54 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private TokenRedefinicaoSenhaService tokenRedefinicaoSenhaService;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<?> validarToken(@RequestParam("token") String token) {
+        try {
+            // Valida o token de redefinição de senha
+            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
+            if (!isValid) {
+                return ResponseEntity.status(400).body("Token inválido ou expirado.");
+            }
+            return ResponseEntity.ok("Token válido.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao validar o token.");
+        }
+    }
+
+    @PostMapping("/reset-password-validate")
+    public ResponseEntity<?> redefinirSenha(@RequestParam("token") String token, @RequestBody String novaSenha) {
+        try {
+            // Valida o token e obtém o usuário associado
+            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
+            if (!isValid) {
+                return ResponseEntity.status(400).body("Token inválido ou expirado.");
+            }
+
+            Optional<UsuarioModel> usuarioOpt = usuarioService.findByResetToken(token); // Método de busca pelo token
+
+            if (usuarioOpt.isEmpty()) {
+                return ResponseEntity.status(400).body("Usuário não encontrado para este token.");
+            }
+
+            UsuarioModel usuario = usuarioOpt.get();
+            // Criptografa a nova senha
+            String senhaCriptografada = passwordEncoder.encode(novaSenha);
+            usuario.setSenha(senhaCriptografada);
+            usuarioService.salvarUsuario(usuario); // Atualiza o usuário com a nova senha
+
+
+
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao redefinir a senha.");
+        }
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
@@ -127,5 +176,7 @@ public class AuthController {
         usuarioService.salvarUsuario(usuario);
 
         return ResponseEntity.ok("Senha redefinida com sucesso.");
+
+
     }
 }

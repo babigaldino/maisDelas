@@ -22,6 +22,17 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    public void redefinirSenha(UsuarioModel usuario, String novaSenha) {
+        // Criptografa a nova senha
+        String senhaCriptografada = passwordEncoder.encode(novaSenha);
+        usuario.setSenha(senhaCriptografada);
+
+        // Limpa o token de redefinição de senha, se necessário
+        usuario.setResetToken(null); // Limpa o token
+
+        // Salva o usuário com a nova senha
+        usuarioRepository.save(usuario);
+    }
 
     // Método para salvar um novo usuário
     public UsuarioModel salvarUsuario(UsuarioModel usuario) {
@@ -86,4 +97,21 @@ public class UsuarioService {
 
         return usuarioRepository.save(usuario);
     }
+
+
+
+    // Método no UsuarioService para buscar por resetToken
+    public Optional<UsuarioModel> findByResetToken(String token) {
+        return usuarioRepository.findByResetToken(token);
+    }
+
+    // Método para atualizar o token no usuário
+    public void atualizarResetToken(String token, String email) {
+        UsuarioModel usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
+        usuario.setResetToken(token);
+        usuarioRepository.save(usuario);
+    }
+
+
 }
