@@ -2,6 +2,8 @@ package com.delas.api.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -12,60 +14,51 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.util.Collections;
 
-@Component // Declara a classe como um componente gerenciado pelo Spring
+@Component
 public class JwtFilter extends OncePerRequestFilter {
-
-    // Chave secreta usada para assinar e validar tokens JWT
-    private final String SECRET_KEY = "sua_chave_secreta_super_segura";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        // Obtém o cabeçalho Authorization da requisição
         final String authorizationHeader = request.getHeader("Authorization");
 
-        String username = null; // Nome de usuário extraído do token
-        String jwt = null; // Token JWT
+        String username = null;
+        String jwt = null;
 
-        // Verifica se o cabeçalho Authorization contém um token JWT
+        // Verifica se o token está presente no cabeçalho Authorization
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            // Remove o prefixo "Bearer " do token
             jwt = authorizationHeader.substring(7);
-
             try {
-                // Extrai as claims (informações) do token JWT
+                // A chave secreta para validação do token
+                String SECRET_KEY = "your_very_secret_and_long_key_that_is_256_bits_long";
+                SecretKey key = new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(SECRET_KEY) // Configura a chave secreta para validação
+                        .setSigningKey(key) // Use o mesmo formato de chave usada na geração
                         .build()
                         .parseClaimsJws(jwt)
                         .getBody();
-
-                // Obtém o nome de usuário (subject) do token
                 username = claims.getSubject();
             } catch (Exception e) {
-                // Caso ocorra um erro durante a validação do token (ex.: token inválido ou expirado)
-                System.out.println("Token inválido: " + e.getMessage());
+                System.out.println("Erro ao validar o token: " + e.getMessage());
             }
         }
 
-        // Verifica se o nome de usuário foi extraído e se o usuário ainda não está autenticado
+        // Se o username foi extraído e o contexto de segurança ainda não tem um usuário autenticado
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Cria o token de autenticação do Spring Security
+            // Criação do objeto de autenticação
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(username, null, null);
-
-            // Adiciona detalhes da requisição (como IP, user-agent) ao token de autenticação
-            authenticationToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-
-            // Define o usuário autenticado no contexto de segurança do Spring
+                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()); // Adicionar authorities se necessário
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Define a autenticação no contexto de segurança
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 
-        // Continua o processamento da requisição para outros filtros ou controladores
+        // Chama o próximo filtro na cadeia de filtros
         chain.doFilter(request, response);
     }
 }

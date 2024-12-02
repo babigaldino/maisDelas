@@ -52,6 +52,9 @@ public class UsuarioModel {
         @Column(name = "cpf", nullable = false, unique = true)
         private String cpf;
 
+        @Column(name = "reset_token")
+        private String resetToken; // Campo para armazenar o token de redefinição
+
 
     public enum TipoUsuario {
         ADMIN,

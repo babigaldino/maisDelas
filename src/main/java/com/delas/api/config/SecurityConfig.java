@@ -25,15 +25,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desabilita CSRF, que não é necessário para APIs REST
+                .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs REST
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Permite todas as requisições, sem restrição de autenticação
+                        // Libera todos os endpoints do AuthController
+                        .requestMatchers("/auth/**").permitAll()
+                        // Libera os endpoints do Swagger para acesso sem autenticação
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        // Exige autenticação para qualquer outra rota
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Define que a sessão será stateless (sem estado)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Define que a sessão será stateless
                 );
 
-        // Adiciona o filtro JWT antes do UsernamePasswordAuthenticationFilter (filtro de autenticação padrão)
+        // Adiciona o filtro JWT antes do UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -51,5 +60,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager(); // Fornece o AuthenticationManager configurado
     }
 }
-
-
