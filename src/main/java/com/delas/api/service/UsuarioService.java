@@ -14,7 +14,6 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -22,6 +21,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     public void redefinirSenha(UsuarioModel usuario, String novaSenha) {
         // Criptografa a nova senha
         String senhaCriptografada = passwordEncoder.encode(novaSenha);
@@ -98,8 +98,6 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-
-
     // Método no UsuarioService para buscar por resetToken
     public Optional<UsuarioModel> findByResetToken(String token) {
         return usuarioRepository.findByResetToken(token);
@@ -113,5 +111,14 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    public String obterRankingPrestador(Long prestadorId) {
+        UsuarioModel prestador = usuarioRepository.findById(prestadorId)
+                .orElseThrow(() -> new RuntimeException("Prestador não encontrado com o ID: " + prestadorId));
 
+        if (prestador.getTipo() != UsuarioModel.TipoUsuario.PRESTADOR) {
+            throw new RuntimeException("O usuário não é um prestador.");
+        }
+
+        return prestador.determinarRanking();
+    }
 }

@@ -13,25 +13,25 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class FavoritoModel {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long idfavorito;
+        @Id  // Define o campo como a chave primária da tabela
+        @GeneratedValue(strategy = GenerationType.IDENTITY)  // Define a estratégia de geração automática do valor da chave primária (auto-incremento)
+        private Long id;  // A chave primária, que é do tipo Long
 
-        @ManyToOne
-        @JoinColumn(name = "idservicofavorito", nullable = false)
-        private ServicosModel servicoFavorito;
+        @ManyToOne  // Define um relacionamento "muitos para um" entre FavoritoModel e ServicosModel (um serviço pode ser favoritado por muitos usuários)
+        @JoinColumn(name = "idservicofavorito", nullable = false)  // Define a coluna que representa a chave estrangeira (idservicofavorito) e especifica que não pode ser nula
+        private ServicosModel servicoFavorito;  // Relacionamento com a tabela "servicos", ou seja, um serviço que é favoritado
 
-        @ManyToOne
-        @JoinColumn(name = "idprestadorfavorito", nullable = false)
-        private UsuarioModel usuarioFavorito;
+        @ManyToOne  // Define um relacionamento "muitos para um" entre FavoritoModel e UsuarioModel (um usuário pode favoritar muitos serviços)
+        @JoinColumn(name = "idprestadorfavorito", nullable = false)  // Define a coluna que representa a chave estrangeira (idprestadorfavorito) e especifica que não pode ser nula
+        private UsuarioModel usuarioFavorito;  // Relacionamento com a tabela "usuarios", ou seja, o usuário que favoritou o serviço
 
-        @Column(name = "datafavoritamento")
-        private LocalDateTime datafavoritamento;
+        private LocalDateTime dataFavoritamento;  // Data e hora em que o serviço foi favoritado
 
-
+        // Método para definir a dataFavoritamento automaticamente, que será executado antes de persistir a entidade no banco de dados
+        @PrePersist
+        protected void onCreate() {
+                this.dataFavoritamento = LocalDateTime.now();  // Define a data e hora atual como a data de favoritação
+        }
 }
-
-
