@@ -1,5 +1,4 @@
 package com.delas.api.controller;
-
 import com.delas.api.dto.UsuarioDTO;
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.service.UsuarioService;
@@ -17,7 +16,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Criar usuário - utilizando UsuarioDTO
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioModel criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -25,13 +23,18 @@ public class UsuarioController {
         return usuarioService.criarUsuario(usuarioDTO);
     }
 
-    // Obter todos os usuários
+    // Endpoint para editar o perfil do usuário
+    @PutMapping("/{id}/perfil")
+    public ResponseEntity<UsuarioModel> editarPerfil(@PathVariable Long id, @RequestBody UsuarioModel usuarioDetails) {
+        UsuarioModel usuarioAtualizado = usuarioService.editarPerfil(id, usuarioDetails);
+        return ResponseEntity.ok(usuarioAtualizado);
+    }
+
     @GetMapping
     public List<UsuarioModel> getAllUsuarios() {
         return usuarioService.listarUsuarios();
     }
 
-    // Obter usuário por ID
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioModel> getUsuarioById(@PathVariable Long id) {
         return usuarioService.buscarUsuarioPorId(id)
@@ -39,13 +42,11 @@ public class UsuarioController {
                 .orElseGet(() -> ResponseEntity.status(404).build());
     }
 
-    // Atualizar um usuário existente
     @PutMapping("/{id}")
     public UsuarioModel updateUsuario(@PathVariable Long id, @RequestBody UsuarioModel usuarioDetails) {
         return usuarioService.atualizarUsuario(id, usuarioDetails);
     }
 
-    // Deletar um usuário
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
         usuarioService.deletarUsuario(id);
@@ -64,4 +65,5 @@ public class UsuarioController {
         }
         return ResponseEntity.ok(usuariosFiltrados);
     }
+
 }
