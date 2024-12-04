@@ -61,7 +61,7 @@ public class AvaliacaoService {
 
         // Cria nova avaliação
         AvaliacaoModel avaliacao = new AvaliacaoModel();
-        avaliacao.setContratacao(contratacao);  // Corrigido: setContratacao()
+        avaliacao.setIdcontratacao(contratacao);  // Corrigido: setContratacao()
         avaliacao.setNota(nota);
 
         // Salvar avaliação no banco de dados
