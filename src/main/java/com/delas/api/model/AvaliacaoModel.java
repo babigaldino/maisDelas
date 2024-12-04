@@ -21,7 +21,7 @@ public class AvaliacaoModel {
     // Relacionamento com a tabela Contratacao
     @OneToOne
     @JoinColumn(name = "idcontratacao", nullable = false)
-    private ContratacaoModel contratacao;
+    private ContratacaoModel idcontratacao;
 
     // Outros campos da avaliação
     @Column(name = "nota")
@@ -29,11 +29,11 @@ public class AvaliacaoModel {
 
     // Getters e Setters gerados automaticamente pelo Lombok
     public ContratacaoModel getContratacao() {
-        return contratacao;
+        return idcontratacao;
     }
 
     public void setContratacao(ContratacaoModel contratacao) {
-        this.contratacao = contratacao;
+        this.idcontratacao = contratacao;
     }
 
     public int getNota() {
