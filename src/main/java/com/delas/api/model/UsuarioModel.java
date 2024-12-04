@@ -63,7 +63,7 @@ public class UsuarioModel {
     private List<Integer> avaliacoes = new ArrayList<>();
 
     // Relacionamento com ContratacaoModel
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContratacaoModel> contratacoes = new ArrayList<>();
 
     // Enum para o tipo de usuário
