@@ -8,6 +8,9 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioModel, Long> {
 
+    boolean existsByCpf(String cpf);
+    boolean existsByEmail(String email);
+
     Optional<UsuarioModel> findByEmail(String email);
 
     Optional<UsuarioModel> findByResetToken(String resetToken);
