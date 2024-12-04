@@ -29,9 +29,13 @@ public class FavoritoModel {
         private UsuarioModel usuarioFavorito;
 
         @Column(name = "datafavoritamento")
-        private LocalDateTime datafavoritamento;
+        private LocalDateTime dataFavoritamento;
+
+        @PrePersist
+        protected void onCreate() {
+                this.dataFavoritamento = LocalDateTime.now();
 
 
+        }
 }
-
 
