@@ -121,4 +121,45 @@ public class UsuarioService {
 
         return prestador.determinarRanking();
     }
+
+
+    // Regras de negócio para edição de perfil
+    public UsuarioModel editarPerfil(Long id, UsuarioModel usuarioAtualizado) {
+        // Recuperar o usuário existente no banco de dados
+        UsuarioModel usuarioExistente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
+
+        // Validar alterações permitidas
+        if (!usuarioAtualizado.getEmail().equals(usuarioExistente.getEmail())) {
+            if (usuarioRepository.existsByEmail(usuarioAtualizado.getEmail())) {
+                throw new IllegalArgumentException("E-mail já está em uso por outro usuário.");
+            }
+        }
+
+        if (!usuarioAtualizado.getCpf().equals(usuarioExistente.getCpf())) {
+            if (usuarioRepository.existsByCpf(usuarioAtualizado.getCpf())) {
+                throw new IllegalArgumentException("CPF já está em uso por outro usuário.");
+            }
+        }
+
+        // Atualizar somente os campos permitidos
+        usuarioExistente.setNome(usuarioAtualizado.getNome());
+        usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+        usuarioExistente.setTelefone(usuarioAtualizado.getTelefone());
+        usuarioExistente.setRua(usuarioAtualizado.getRua());
+        usuarioExistente.setBairro(usuarioAtualizado.getBairro());
+        usuarioExistente.setCep(usuarioAtualizado.getCep());
+
+        // Atualizar a senha somente se fornecida
+        if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isEmpty()) {
+            usuarioExistente.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
+        }
+
+        // Persistir alterações
+        return usuarioRepository.save(usuarioExistente);
+    }
 }
+
+
+
+
