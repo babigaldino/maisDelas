@@ -1,7 +1,9 @@
 package com.delas.api.controller;
 
 import com.delas.api.dto.LoginDTO;
+import com.delas.api.model.TokenRedefinicaoSenhaModel;
 import com.delas.api.model.UsuarioModel;
+import com.delas.api.repository.TokenRedefinicaoSenhaRepository;
 import com.delas.api.service.EmailService;
 import com.delas.api.service.UsuarioService;
 import com.delas.api.repository.UsuarioRepository;
@@ -23,6 +25,7 @@ import com.delas.api.config.JwtUtil;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,52 +45,75 @@ public class AuthController {
 
     @Autowired
     private TokenRedefinicaoSenhaService tokenRedefinicaoSenhaService;
+    private TokenRedefinicaoSenhaRepository tokenRedefinicaoSenhaRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
+
     @GetMapping("/reset-password")
-    public ResponseEntity<?> validarToken(@RequestParam("token") String token) {
+    public ResponseEntity<String> validarToken(@RequestParam("token") String token) {
         try {
-            // Valida o token de redefinição de senha
+            // Usando o método validarToken do service
             boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
+
             if (!isValid) {
                 return ResponseEntity.status(400).body("Token inválido ou expirado.");
             }
+
             return ResponseEntity.ok("Token válido.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao validar o token.");
         }
     }
 
-    @PostMapping("/reset-password-validate")
-    public ResponseEntity<?> redefinirSenha(@RequestParam("token") String token, @RequestBody String novaSenha) {
-        try {
-            // Valida o token e obtém o usuário associado
-            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
-            if (!isValid) {
-                return ResponseEntity.status(400).body("Token inválido ou expirado.");
-            }
-
-            Optional<UsuarioModel> usuarioOpt = usuarioService.findByResetToken(token); // Método de busca pelo token
-
-            if (usuarioOpt.isEmpty()) {
-                return ResponseEntity.status(400).body("Usuário não encontrado para este token.");
-            }
-
-            UsuarioModel usuario = usuarioOpt.get();
-            // Criptografa a nova senha
-            String senhaCriptografada = passwordEncoder.encode(novaSenha);
-            usuario.setSenha(senhaCriptografada);
-            usuarioService.salvarUsuario(usuario); // Atualiza o usuário com a nova senha
 
 
+//    @PostMapping("/reset-password-validate")
+//    public ResponseEntity<?> redefinirSenha(@RequestParam("token") String token, @RequestBody String novaSenha) {
+//        try {
+//            // Valida o token e obtém o usuário associado
+//            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
+//            if (!isValid) {
+//                return ResponseEntity.status(400).body("Token inválido ou expirado.");
+//            }
+//
+//            // Busca o ResetToken associado ao token fornecido
+//            Optional<TokenRedefinicaoSenhaModel> resetTokenOpt = tokenRedefinicaoSenhaRepository.findByToken(token);
+//
+//            // Verifica se o token foi encontrado
+//            if (resetTokenOpt.isEmpty()) {
+//                return ResponseEntity.status(400).body("Token inválido.");
+//            }
+//
+//            TokenRedefinicaoSenhaModel resetToken = resetTokenOpt.get();
+//            UsuarioModel usuario = resetToken.getId();
+//
+//            // Agora você pode redefinir a senha do usuário
+//            usuarioService.redefinirSenha(usuario, novaSenha);
+//
+//            // Após redefinir a senha, você pode limpar o token
+//            tokenRedefinicaoSenhaRepository.delete(resetToken); // Opcional, dependendo do seu fluxo
+//
+//            return ResponseEntity.ok("Senha redefinida com sucesso.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("Erro ao redefinir a senha.");
+//        }
+//
+//
+//
+//            UsuarioModel usuario = usuarioOpt.get();
+//            // Criptografa a nova senha
+//            String senhaCriptografada = passwordEncoder.encode(novaSenha);
+//            usuario.setSenha(senhaCriptografada);
+//            usuarioService.salvarUsuario(usuario); // Atualiza o usuário com a nova senha
+//
+//
+//
+//            return ResponseEntity.ok("Senha redefinida com sucesso.");
+//        }
 
-            return ResponseEntity.ok("Senha redefinida com sucesso.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao redefinir a senha.");
-        }
-    }
 
 
     @PostMapping("/login")
@@ -148,7 +174,9 @@ public class AuthController {
             return ResponseEntity.status(404).body("Usuário não encontrado.");
         }
 
-        String token = jwtUtil.generateToken(email);
+        // Geração do token
+        String token = UUID.randomUUID().toString();
+        tokenRedefinicaoSenhaService.gerarToken(usuario, token);
 
         try {
             emailService.sendRecoveryEmail(email, token);
@@ -159,24 +187,4 @@ public class AuthController {
         return ResponseEntity.ok("E-mail de recuperação enviado.");
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        String email = jwtUtil.extractEmail(token);
-
-        if (email == null || !jwtUtil.validateToken(token, email)) {
-            return ResponseEntity.status(400).body("Token inválido ou expirado.");
-        }
-
-        UsuarioModel usuario = usuarioService.findByEmail(email);
-        if (usuario == null) {
-            return ResponseEntity.status(404).body("Usuário não encontrado.");
-        }
-
-        usuario.setSenha(passwordEncoder.encode(newPassword));
-        usuarioService.salvarUsuario(usuario);
-
-        return ResponseEntity.ok("Senha redefinida com sucesso.");
-
-
-    }
 }
