@@ -1,6 +1,7 @@
 package com.delas.api.controller;
 
 import com.delas.api.dto.LoginDTO;
+import com.delas.api.dto.Request;
 import com.delas.api.model.TokenRedefinicaoSenhaModel;
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.TokenRedefinicaoSenhaRepository;
@@ -45,6 +46,8 @@ public class AuthController {
 
     @Autowired
     private TokenRedefinicaoSenhaService tokenRedefinicaoSenhaService;
+
+    @Autowired
     private TokenRedefinicaoSenhaRepository tokenRedefinicaoSenhaRepository;
 
     @Autowired
@@ -70,49 +73,46 @@ public class AuthController {
 
 
 
-//    @PostMapping("/reset-password-validate")
-//    public ResponseEntity<?> redefinirSenha(@RequestParam("token") String token, @RequestBody String novaSenha) {
-//        try {
-//            // Valida o token e obtém o usuário associado
-//            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
-//            if (!isValid) {
-//                return ResponseEntity.status(400).body("Token inválido ou expirado.");
-//            }
-//
-//            // Busca o ResetToken associado ao token fornecido
-//            Optional<TokenRedefinicaoSenhaModel> resetTokenOpt = tokenRedefinicaoSenhaRepository.findByToken(token);
-//
-//            // Verifica se o token foi encontrado
-//            if (resetTokenOpt.isEmpty()) {
-//                return ResponseEntity.status(400).body("Token inválido.");
-//            }
-//
-//            TokenRedefinicaoSenhaModel resetToken = resetTokenOpt.get();
-//            UsuarioModel usuario = resetToken.getId();
-//
-//            // Agora você pode redefinir a senha do usuário
-//            usuarioService.redefinirSenha(usuario, novaSenha);
-//
-//            // Após redefinir a senha, você pode limpar o token
-//            tokenRedefinicaoSenhaRepository.delete(resetToken); // Opcional, dependendo do seu fluxo
-//
-//            return ResponseEntity.ok("Senha redefinida com sucesso.");
+    @PostMapping("/reset-password-validate")
+    public ResponseEntity<?> redefinirSenha(@RequestBody Request request) {
+        try {
+            String token = request.getToken();
+            String novaSenha = request.getNovaSenha();
+
+            // Valida o token
+            boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
+            if (!isValid) {
+                return ResponseEntity.status(400).body("Token inválido ou expirado.");
+            }
+
+            // Busca o ResetToken associado ao token fornecido
+            Optional<TokenRedefinicaoSenhaModel> resetTokenOpt = tokenRedefinicaoSenhaRepository.findByToken(token);
+            if (resetTokenOpt.isEmpty()) {
+                return ResponseEntity.status(400).body("Token inválido.");
+            }
+
+            TokenRedefinicaoSenhaModel resetToken = resetTokenOpt.get();
+            UsuarioModel usuario = resetToken.getId();  // Aqui você deve pegar o usuário associado ao token
+
+            // Criptografa a nova senha
+            String senhaCriptografada = passwordEncoder.encode(novaSenha);
+            usuario.setSenha(senhaCriptografada);
+
+            // Salva o usuário com a nova senha
+            usuarioRepository.save(usuario);
+
+            // Após redefinir a senha, você pode limpar o token
+            tokenRedefinicaoSenhaRepository.delete(resetToken); // Opcional, dependendo do seu fluxo
+
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
 //        } catch (Exception e) {
 //            return ResponseEntity.status(500).body("Erro ao redefinir a senha.");
 //        }
-//
-//
-//
-//            UsuarioModel usuario = usuarioOpt.get();
-//            // Criptografa a nova senha
-//            String senhaCriptografada = passwordEncoder.encode(novaSenha);
-//            usuario.setSenha(senhaCriptografada);
-//            usuarioService.salvarUsuario(usuario); // Atualiza o usuário com a nova senha
-//
-//
-//
-//            return ResponseEntity.ok("Senha redefinida com sucesso.");
-//        }
+
+        } finally {
+
+        }
+    }
 
 
 
