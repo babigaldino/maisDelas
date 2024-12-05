@@ -1,12 +1,14 @@
 package com.delas.api.service;
-
+import com.delas.api.model.TokenRedefinicaoSenhaModel;
 import com.delas.api.dto.UsuarioDTO;
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.UsuarioRepository;
+import com.delas.api.repository.TokenRedefinicaoSenhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,21 +19,39 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
+    private TokenRedefinicaoSenhaRepository tokenRepository;
+
+
+
+
+    @Autowired
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void redefinirSenha(UsuarioModel usuario, String novaSenha) {
+    public void redefinirSenha(String token, String novaSenha) {
+        // Busca o token de redefinição no banco
+        TokenRedefinicaoSenhaModel tokenModel = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Token inválido ou expirado"));
+
+        // Valida se o token não está expirado
+        if (tokenModel.getDataExpiracao().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Token expirado");
+        }
+
+        // Busca o usuário associado ao token
+        UsuarioModel usuario = tokenModel.getId();
+
         // Criptografa a nova senha
         String senhaCriptografada = passwordEncoder.encode(novaSenha);
         usuario.setSenha(senhaCriptografada);
 
-        // Limpa o token de redefinição de senha, se necessário
-        usuario.setResetToken(null); // Limpa o token
-
         // Salva o usuário com a nova senha
         usuarioRepository.save(usuario);
+
+        // Remove o token após o uso
+        tokenRepository.delete(tokenModel);
     }
 
     // Método para salvar um novo usuário
@@ -99,16 +119,24 @@ public class UsuarioService {
     }
 
     // Método no UsuarioService para buscar por resetToken
-    public Optional<UsuarioModel> findByResetToken(String token) {
-        return usuarioRepository.findByResetToken(token);
+    public Optional<TokenRedefinicaoSenhaModel> findByResetToken(String token) {
+        return tokenRepository.findByToken(token);
     }
 
     // Método para atualizar o token no usuário
     public void atualizarResetToken(String token, String email) {
+        // Busca o usuário pelo email
         UsuarioModel usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
-        usuario.setResetToken(token);
-        usuarioRepository.save(usuario);
+
+        // Cria um novo token de redefinição de senha
+        TokenRedefinicaoSenhaModel novoToken = new TokenRedefinicaoSenhaModel();
+        novoToken.setToken(token);
+        novoToken.setId(usuario);
+        novoToken.setDataExpiracao(LocalDateTime.now().plusHours(1)); // Exemplo de expiração do token após 1 hora
+
+        // Salva o novo token no banco
+        tokenRepository.save(novoToken);
     }
 
     public String obterRankingPrestador(Long prestadorId) {
