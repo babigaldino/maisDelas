@@ -25,7 +25,7 @@ public class TokenRedefinicaoSenhaModel {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private UsuarioModel usuario;  // Referência ao usuário que solicitou a redefinição
+    private UsuarioModel id;  // Referência ao usuário que solicitou a redefinição
 
     @Column(name = "data_expiracao", nullable = false)
     private LocalDateTime dataExpiracao;  // Data e hora de expiração do token
