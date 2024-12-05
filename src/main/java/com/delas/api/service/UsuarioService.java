@@ -22,8 +22,6 @@ public class UsuarioService {
     private TokenRedefinicaoSenhaRepository tokenRepository;
 
 
-
-
     @Autowired
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
@@ -32,16 +30,24 @@ public class UsuarioService {
 
     public void redefinirSenha(String token, String novaSenha) {
         // Busca o token de redefinição no banco
-        TokenRedefinicaoSenhaModel tokenModel = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token inválido ou expirado"));
+        Optional<TokenRedefinicaoSenhaModel> tokenOpt = tokenRepository.findByToken(token);
+
+        if (tokenOpt.isEmpty()) {
+            throw new IllegalArgumentException("Token inválido ou não encontrado.");
+        }
 
         // Valida se o token não está expirado
+        TokenRedefinicaoSenhaModel tokenModel = tokenOpt.get();
         if (tokenModel.getDataExpiracao().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Token expirado");
+            throw new IllegalArgumentException("Token expirado.");
         }
 
         // Busca o usuário associado ao token
-        UsuarioModel usuario = tokenModel.getId();
+        UsuarioModel usuario = tokenModel.getId();  // Aqui estamos assumindo que você tem um relacionamento com o usuário
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
+        }
 
         // Criptografa a nova senha
         String senhaCriptografada = passwordEncoder.encode(novaSenha);
@@ -187,7 +193,3 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 }
-
-
-
-
