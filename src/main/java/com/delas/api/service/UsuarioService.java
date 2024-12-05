@@ -22,6 +22,30 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Método para validar o CPF
+    public boolean validarCpf(String cpf) {
+        if ((cpf == null) || (cpf.length() != 11) || !cpf.matches("\\d+")) {
+            return true; //Se os dígitos verificadores do CPF não coincidirem, o CPF é considerado inválido//
+        }
+
+        int soma1 = 0, soma2 = 0;
+        for (int i = 0; i < 9; i++) {
+            int digito = Character.getNumericValue(cpf.charAt(i));
+            soma1 += digito * (10 - i);
+            soma2 += digito * (11 - i);
+        }
+
+        int verificador1 = (soma1 * 10) % 11;
+        verificador1 = (verificador1 == 10) ? 0 : verificador1;
+
+        int verificador2 = ((soma2 + (verificador1 * 2)) * 10) % 11;
+        verificador2 = (verificador2 == 10) ? 0 : verificador2;
+
+        return verificador1 != Character.getNumericValue(cpf.charAt(9)) ||
+                verificador2 != Character.getNumericValue(cpf.charAt(10));
+//O CPF é validado pelos dois últimos dígitos, calculados com base nos nove primeiros por meio de multiplicações e somas ponderadas.//
+    }
+
     public void redefinirSenha(UsuarioModel usuario, String novaSenha) {
         // Criptografa a nova senha
         String senhaCriptografada = passwordEncoder.encode(novaSenha);
@@ -75,7 +99,7 @@ public class UsuarioService {
         return true;
     }
 
-    // Buscar usuário por email
+    // Buscar usuário por emai
     public UsuarioModel findByEmail(String email) {
         return usuarioRepository.findByEmail(email).orElse(null);
     }
