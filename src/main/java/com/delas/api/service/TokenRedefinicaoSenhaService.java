@@ -23,21 +23,24 @@ public class TokenRedefinicaoSenhaService {
     public TokenRedefinicaoSenhaModel gerarToken(UsuarioModel usuario, String token) {
         TokenRedefinicaoSenhaModel tokenRedefinicao = new TokenRedefinicaoSenhaModel();
         tokenRedefinicao.setToken(token);
-        tokenRedefinicao.setUsuario(usuario);
-        tokenRedefinicao.setDataExpiracao(LocalDateTime.now().plusHours(1));  // Expira em 1 hora
+        tokenRedefinicao.setId(usuario);
+        tokenRedefinicao.setDataExpiracao(LocalDateTime.now().plusHours(1));
 
-        return tokenRepository.save(tokenRedefinicao);
+        TokenRedefinicaoSenhaModel salvo = tokenRepository.save(tokenRedefinicao);
+        System.out.println("Token salvo no banco: " + salvo.getToken());
+        return salvo;
+    }
+    public Optional<TokenRedefinicaoSenhaModel> buscarToken(String token) {
+        return tokenRepository.findByToken(token);
+
     }
 
-    // Método para validar o token
     public boolean validarToken(String token) {
-        Optional<TokenRedefinicaoSenhaModel> tokenOpt = tokenRepository.findByToken(token);
-        if (tokenOpt.isPresent()) {
-            TokenRedefinicaoSenhaModel tokenRedefinicao = tokenOpt.get();
-            return tokenRedefinicao.getDataExpiracao().isAfter(LocalDateTime.now());
-        }
-        return false;
+        Optional<TokenRedefinicaoSenhaModel> tokenOpt = buscarToken(token);
+        return tokenOpt.isPresent() && tokenOpt.get().getDataExpiracao().isAfter(java.time.LocalDateTime.now());
     }
+
+
 
     // Método para remover o token após a redefinição da senha
     public void removerToken(TokenRedefinicaoSenhaModel tokenRedefinicao) {
