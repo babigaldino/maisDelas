@@ -31,7 +31,7 @@ public class UsuarioModel {
     @Column(name = "senha", length = 80, nullable = false)
     private String senha;
 
-    @Column(name = "telefone", length = 15)
+    @Column(name = "telefone", length = 15, unique = true)
     private String telefone;
 
     @Enumerated(EnumType.STRING)
@@ -41,7 +41,7 @@ public class UsuarioModel {
     @Column(name = "bairro", length = 45)
     private String bairro;
 
-    @Column(name = "cep", length = 20)
+    @Column(name = "cep", length = 20, unique = true)
     private String cep;
 
     @Column(name = "rua", length = 100) // Adicionado o campo "rua"
@@ -53,10 +53,6 @@ public class UsuarioModel {
 
     @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
-
-    // Campo para armazenar o token de redefinição
-    @Column(name = "reset_token")
-    private String resetToken;
 
     // Lista de avaliações do usuário
     @ElementCollection
@@ -98,19 +94,5 @@ public class UsuarioModel {
         }
     }
 
-    // Método de exemplo para criar um usuário
-    public static UsuarioModel criarUsuarioExemplo() {
-        UsuarioModel usuario = new UsuarioModel();
-        usuario.setNome("João da Silva");
-        usuario.setEmail("joao.silva@email.com");
-        usuario.setSenha("senha123");
-        usuario.setTelefone("1234567890");
-        usuario.setTipo(TipoUsuario.CLIENTE);
-        usuario.setRua("Rua Exemplo"); // Agora a rua está presente
-        usuario.setBairro("Bairro Teste");
-        usuario.setCep("12345-678");
-        usuario.setDatacriacao(new Date());
-        usuario.setCpf("123.456.789-00");
-        return usuario;
-    }
 }
+   
