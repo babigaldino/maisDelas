@@ -124,26 +124,6 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // Método no UsuarioService para buscar por resetToken
-    public Optional<TokenRedefinicaoSenhaModel> findByResetToken(String token) {
-        return tokenRepository.findByToken(token);
-    }
-
-    // Método para atualizar o token no usuário
-    public void atualizarResetToken(String token, String email) {
-        // Busca o usuário pelo email
-        UsuarioModel usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
-
-        // Cria um novo token de redefinição de senha
-        TokenRedefinicaoSenhaModel novoToken = new TokenRedefinicaoSenhaModel();
-        novoToken.setToken(token);
-        novoToken.setId(usuario);
-        novoToken.setDataExpiracao(LocalDateTime.now().plusHours(1)); // Exemplo de expiração do token após 1 hora
-
-        // Salva o novo token no banco
-        tokenRepository.save(novoToken);
-    }
 
     public String obterRankingPrestador(Long prestadorId) {
         UsuarioModel prestador = usuarioRepository.findById(prestadorId)

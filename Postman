@@ -80,15 +80,14 @@ http://localhost:8080/favorito/id
 POST - CONTRATACAO
 
 {
-    "id": {
-        "id": 1
-    },
-    "idservicos": {
-        "idservicos": 1
-    },
-    "status": "pendente",
-    "datacriacao": "2024-11-22T12:00:00",
-    "comentarios": "Primeira contratação teste"
+  "usuario": {
+    "id": 4
+  },
+  "servicos": {
+    "idservicos": 2
+  },
+  "status": "pendente",
+  "comentarios": "Solicitação de limpeza urgente"
 }
 
 PUT - CONTRATACAO
@@ -108,11 +107,11 @@ PUT - CONTRATACAO
 POST - Avaliacao
 
 {
-  "idcontratacao": {
-    "idcontratacao": 3
+  "contratacao": {
+    "id": 1
   },
   "nota": 5
-}
+  }
 
 PUT - AVALIAÇÂO
 
