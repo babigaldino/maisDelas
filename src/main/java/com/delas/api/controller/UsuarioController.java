@@ -53,15 +53,14 @@ public class UsuarioController {
     }
 
     // Endpoint para filtrar usuários por ranking
-    @GetMapping("/ranking/{ranking}")
-    public ResponseEntity<List<UsuarioModel>> getUsuariosByRanking(@PathVariable String ranking) {
-        List<UsuarioModel> usuariosFiltrados = usuarioService.listarUsuarios().stream()
-                .filter(usuario -> usuario.determinarRanking().equals(ranking))
-                .collect(Collectors.toList());
-
-        if (usuariosFiltrados.isEmpty()) {
-            return ResponseEntity.status(404).build();
+    @GetMapping("/prestador/{id}/ranking")
+    public ResponseEntity<String> obterRankingPrestador(@PathVariable Long id) {
+        try {
+            String ranking = usuarioService.obterRankingPrestador(id);
+            return ResponseEntity.ok(ranking);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok(usuariosFiltrados);
     }
+
 }
