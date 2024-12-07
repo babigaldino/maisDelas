@@ -23,11 +23,13 @@ public class UsuarioService {
     }
 
     // Método para validar o CPF
-    public boolean validarCpf(String cpf) {
-        if ((cpf == null) || (cpf.length() != 11) || !cpf.matches("\\d+")) {
-            return true; //Se os dígitos verificadores do CPF não coincidirem, o CPF é considerado inválido//
+    public boolean cpfValido(String cpf) {
+        // Verifica se o CPF é nulo, possui tamanho diferente de 11 ou contém caracteres não numéricos
+        if (cpf == null || cpf.length() != 11 || !cpf.matches("\\d+")) {
+            return false;
         }
 
+        // Cálculo dos dígitos verificadores
         int soma1 = 0, soma2 = 0;
         for (int i = 0; i < 9; i++) {
             int digito = Character.getNumericValue(cpf.charAt(i));
@@ -41,43 +43,39 @@ public class UsuarioService {
         int verificador2 = ((soma2 + (verificador1 * 2)) * 10) % 11;
         verificador2 = (verificador2 == 10) ? 0 : verificador2;
 
-        return verificador1 != Character.getNumericValue(cpf.charAt(9)) ||
-                verificador2 != Character.getNumericValue(cpf.charAt(10));
-//O CPF é validado pelos dois últimos dígitos, calculados com base nos nove primeiros por meio de multiplicações e somas ponderadas.//
+        // Verifica se os dígitos verificadores coincidem com os últimos dois dígitos do CPF
+        return verificador1 == Character.getNumericValue(cpf.charAt(9)) &&
+                verificador2 == Character.getNumericValue(cpf.charAt(10));
     }
 
     public void redefinirSenha(UsuarioModel usuario, String novaSenha) {
-        // Criptografa a nova senha
         String senhaCriptografada = passwordEncoder.encode(novaSenha);
         usuario.setSenha(senhaCriptografada);
-
-        // Limpa o token de redefinição de senha, se necessário
-        usuario.setResetToken(null); // Limpa o token
-
-        // Salva o usuário com a nova senha
+        usuario.setResetToken(null);
         usuarioRepository.save(usuario);
     }
 
-    // Método para salvar um novo usuário
     public UsuarioModel salvarUsuario(UsuarioModel usuario) {
-        // Criptografia da senha antes de salvar
+        if (!cpfValido(usuario.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido!"); // metodo para chamar o usuario//
+        }
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
 
-    // Método para listar todos os usuários
     public List<UsuarioModel> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    // Método para buscar um usuário pelo ID
     public Optional<UsuarioModel> buscarUsuarioPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    // Método para atualizar um usuário existente
     public UsuarioModel atualizarUsuario(Long id, UsuarioModel usuarioAtualizado) {
         return usuarioRepository.findById(id).map(usuario -> {
+            if (!cpfValido(usuarioAtualizado.getCpf())) {
+                throw new IllegalArgumentException("CPF inválido!");
+            }
             usuario.setNome(usuarioAtualizado.getNome());
             usuario.setEmail(usuarioAtualizado.getEmail());
             usuario.setTelefone(usuarioAtualizado.getTelefone());
@@ -85,7 +83,6 @@ public class UsuarioService {
             usuario.setRua(usuarioAtualizado.getRua());
             usuario.setBairro(usuarioAtualizado.getBairro());
             usuario.setCep(usuarioAtualizado.getCep());
-            // Criptografar a senha se ela foi atualizada
             if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isEmpty()) {
                 usuario.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
             }
@@ -93,19 +90,19 @@ public class UsuarioService {
         }).orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
     }
 
-    // Método para deletar um usuário pelo ID
     public boolean deletarUsuario(Long id) {
         usuarioRepository.deleteById(id);
         return true;
     }
 
-    // Buscar usuário por emai
     public UsuarioModel findByEmail(String email) {
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
-    // Método para criar um usuário com dados do DTO
     public UsuarioModel criarUsuario(UsuarioDTO usuarioDTO) {
+        if (!cpfValido(usuarioDTO.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido!");
+        }
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNome(usuarioDTO.getNome());
         usuario.setEmail(usuarioDTO.getEmail());
@@ -115,19 +112,14 @@ public class UsuarioService {
         usuario.setBairro(usuarioDTO.getBairro());
         usuario.setCep(usuarioDTO.getCep());
         usuario.setCpf(usuarioDTO.getCpf());
-
-        // Criptografia da senha
         usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
-
         return usuarioRepository.save(usuario);
     }
 
-    // Método no UsuarioService para buscar por resetToken
     public Optional<UsuarioModel> findByResetToken(String token) {
         return usuarioRepository.findByResetToken(token);
     }
 
-    // Método para atualizar o token no usuário
     public void atualizarResetToken(String token, String email) {
         UsuarioModel usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
@@ -146,14 +138,10 @@ public class UsuarioService {
         return prestador.determinarRanking();
     }
 
-
-    // Regras de negócio para edição de perfil
     public UsuarioModel editarPerfil(Long id, UsuarioModel usuarioAtualizado) {
-        // Recuperar o usuário existente no banco de dados
         UsuarioModel usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
 
-        // Validar alterações permitidas
         if (!usuarioAtualizado.getEmail().equals(usuarioExistente.getEmail())) {
             if (usuarioRepository.existsByEmail(usuarioAtualizado.getEmail())) {
                 throw new IllegalArgumentException("E-mail já está em uso por outro usuário.");
@@ -166,7 +154,10 @@ public class UsuarioService {
             }
         }
 
-        // Atualizar somente os campos permitidos
+        if (!cpfValido(usuarioAtualizado.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido!");
+        }
+
         usuarioExistente.setNome(usuarioAtualizado.getNome());
         usuarioExistente.setEmail(usuarioAtualizado.getEmail());
         usuarioExistente.setTelefone(usuarioAtualizado.getTelefone());
@@ -174,16 +165,10 @@ public class UsuarioService {
         usuarioExistente.setBairro(usuarioAtualizado.getBairro());
         usuarioExistente.setCep(usuarioAtualizado.getCep());
 
-        // Atualizar a senha somente se fornecida
         if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isEmpty()) {
             usuarioExistente.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
         }
 
-        // Persistir alterações
         return usuarioRepository.save(usuarioExistente);
     }
 }
-
-
-
-
