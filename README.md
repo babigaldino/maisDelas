@@ -9,7 +9,7 @@ Atualmente, as mulheres enfrentam grandes desafios no mercado de trabalho, pela 
 A plataforma +delas será um site que conecta mulheres prestadoras de serviços autônomos a pessoas que desejam contratar esses serviços. As mulheres terão a liberdade de escolher o dia e a hora em que desejam trabalhar, desde que haja uma negociação feita com o contratante que deseja o serviço da mesma. O sistema permitirá que elas definam suas áreas de atuação, horários disponíveis e condições de trabalho, promovendo a autonomia e flexibilidade. Além disso, a +delas tem como visão atrair mulheres desempregadas, aumentando suas oportunidades de geração de renda e contribuindo para o crescimento da economia local.
 
 
-## Com a nossa plataforma conseguiremos aumentar o Desenvolvimento Econômico e Pessoal:
+## Com a nossa plataforma conseguiremos aumentar o desenvolvimento econômico e pessoal:
 Oferecendo oportunidades para que as mulheres possam ter uma autonomia financeira, um ambiente voltado para a educação e gerenciamento de renda e expandir suas habilidades e conexões profissionais.
 
 Empoderamento Pessoal:
@@ -17,31 +17,51 @@ Promover a confiança e a autoestima das mulheres, incentivando-as a alcançar s
 
 Autonomia: Proporcionar às mulheres a capacidade de gerenciar seu próprio tempo e trabalho, aumentando sua independência financeira de acordo com sua rotina e limitações.
 
-## Cadastro
+## Cadastro.
 A usuária se cadastra com informações básicas (nome, e-mail, área de atuação) e cria uma senha.
 
-## Jornada do Empreemdedor (Caso seja prestadora) (Opcional)
+## Jornada do empreemdedor (Caso seja prestadora) (Opcional).
 A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos rápidos e essenciais, por exemplo:
-- Como se comunicar com seus clientes, Auto-Divulgação e Precificação de Serviços
-- Tarefa Prática: Ao final de cada vídeo, ela faria uma especie de quiz sobre, e no final, registraria o seu serviço utilizando o que foi visto na trilha numa especie de "Sobre Mim" 
-(Vamos usar essa tarefa da trilha como o nosso default pra definir a avaliação inicial pra quem nao tem nenhum serviço prestado)
+- Como se comunicar com seus clientes, Auto-Divulgação, Precificação de Serviços e assusntos voltados a educação financeira.
+- Tarefa Prática: Ao final de cada resumo, ela realiza um quiz sobre o resumo, e no final, registra o seu serviço utilizando o que foi visto na trilha.
+(Vamos usar essa tarefa da trilha como o nosso default pra definir a avaliação inicial pra quem não tem nenhum serviço prestado)
 
-## Criação de Perfil: 
-- Perfil Básico: A usuária monta um perfil com as informações obtidas nas atividades da trilha.
+## Criação de perfil. 
+- Perfil básico: A usuária monta um perfil com as informações obtidas nas atividades da trilha.
 
-## Agendamento e contratação
-- Agendamento Simplificado: Assim que um cliente encontra o serviço desejado e prestadora, ele entra em contato com a mesma para definir o melhor horario para ambos.
+## Agendamento e contratação.
+- Agendamento facilitado: Assim que um cliente encontra o serviço desejado e prestadora, ele entra em contato com a mesma através do botão do whatsapp para definir o melhor horário para ambos.
 
-## Avaliação e Feedback
+## Avaliação e feedback.
 - Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
 - Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
 
-- ## Fluxos de Dados
-- Os diagramas abaixo representam os principais fluxos operacionais da plataforma +delas, detalhando tanto a experiência dos usuários (clientes e prestadoras de serviços) quanto as conexões internas entre as entidades do banco de dados, desde o cadastro ate a finalização do serviço contratado.
+## 🚀 Como Rodar o Aplicativo  
+
+Para executar o projeto localmente utilizando Docker, siga os passos abaixo:  
+
+1. Certifique-se de ter o [Docker](https://www.docker.com/) e o [Maven](https://maven.apache.org/) instalados em sua máquina.  
+2. No diretório raiz do projeto, execute o seguinte comando para limpar e empacotar a aplicação:  
+   mvn clean package
+Em seguida, construa e inicie os contêineres Docker com o comando:
+bash
+docker compose up --build
+
+### 🏆 Principais Tecnologias  
+
+- **Java**: Linguagem de programação principal utilizada no backend.  
+- **Spring Boot**: Framework para desenvolvimento rápido de aplicações Java.  
+- **Spring Security**: Implementação de autenticação e autorização no backend.  
+- **React**: Framework JavaScript para construção do frontend dinâmico e responsivo.  
+- **Docker**: Gerenciamento de contêineres para simplificar a execução do projeto.  
+- **Swagger**: Documentação interativa da API REST.
+
+- ## Fluxos de dados.
+- Os diagramas abaixo representam os principais fluxos operacionais da plataforma +delas, detalhando tanto a experiência dos usuários (clientes e prestadoras de serviços) quanto as conexões internas entre as entidades do banco de dados, desde o cadastro até a finalização do serviço contratado.
 
 ![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/+Delas%20(3).jpg?raw=true)
 
-- ## Fluxos de Dados da Contratação do serviço.
+- ## Fluxos de dados da contratação do serviço.
   
  ![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/%2BDelas%20Contrata%C3%A7%C3%A3o.jpg)
 
