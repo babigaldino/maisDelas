@@ -27,20 +27,5 @@ public class AvaliacaoModel {
     @Column(name = "nota")
     private int nota;
 
-    // Getters e Setters gerados automaticamente pelo Lombok
-    public ContratacaoModel getContratacao() {
-        return idcontratacao;
-    }
 
-    public void setContratacao(ContratacaoModel contratacao) {
-        this.idcontratacao = contratacao;
-    }
-
-    public int getNota() {
-        return nota;
-    }
-
-    public void setNota(int nota) {
-        this.nota = nota;
-    }
 }
