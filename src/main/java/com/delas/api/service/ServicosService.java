@@ -1,7 +1,9 @@
 package com.delas.api.service;
 
 import com.delas.api.model.ServicosModel;
+import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.ServicosRepository;
+import com.delas.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,28 @@ public class ServicosService {
     @Autowired
     private ServicosRepository servicosRepository;
 
-    // Método para salvar um novo serviço
-    public ServicosModel save(ServicosModel servico) {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    // Método para salvar um novo serviço associado a um usuário do tipo PRESTADOR
+    public ServicosModel save(ServicosModel servico, Long usuarioId) {
+        // Verifica se o usuário existe
+        UsuarioModel usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // Verifica se o usuário é do tipo PRESTADOR
+        if (!usuario.getTipo().equals(UsuarioModel.TipoUsuario.PRESTADOR)) {
+            throw new RuntimeException("Apenas usuários do tipo PRESTADOR podem adicionar serviços.");
+        }
+
+        // Relaciona o serviço ao usuário prestador
+        servico.setUsuario(usuario);
+
         return servicosRepository.save(servico);
+    }
+
+    public List<ServicosModel> buscarServicosPorPreco(BigDecimal precoMinimo, BigDecimal precoMaximo) {
+        return servicosRepository.findByPrecoBetween(precoMinimo, precoMaximo);
     }
 
     // Método para buscar serviços por categoria (com suporte a busca parcial)
@@ -45,17 +66,7 @@ public class ServicosService {
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado com id: " + id));
     }
 
-    // Método para buscar serviços por categoria (ignorando case)
-    public List<ServicosModel> findByCategoria(String categoria) {
-        return servicosRepository.findByCategoriaIgnoreCase(categoria);
-    }
 
-    // Método para buscar serviços por faixa de preço
-    public List<ServicosModel> findByPrecoRange(double precoMin, double precoMax) {
-        return servicosRepository.findByPrecoBetween(
-                BigDecimal.valueOf(precoMin), BigDecimal.valueOf(precoMax)
-        );
-    }
 
     // Método para buscar serviços criados após uma data
     public List<ServicosModel> findByDataCriacaoAfter(LocalDateTime dataInicial) {
@@ -76,7 +87,6 @@ public class ServicosService {
         servico.setTitulo(servicoDetails.getTitulo());
         servico.setDatacriacao(servicoDetails.getDatacriacao());  // Corrigido para 'setDatacriacao'
         servico.setCategoria(servicoDetails.getCategoria());
-        servico.setIdfavorito(servicoDetails.getIdfavorito());  // Corrigido para 'setIdfavorito'
         servico.setNota(servicoDetails.getNota()); // Atualiza a nota
         return servicosRepository.save(servico);
     }
