@@ -1,11 +1,12 @@
 package com.delas.api.config;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
+
 import org.springframework.stereotype.Component;
 
 @Component  // Adiciona a anotação @Component para registrar como bean do Spring
