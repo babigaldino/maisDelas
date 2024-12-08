@@ -40,27 +40,5 @@ public class AvaliacaoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    // Atualizar uma avaliação
-    @PutMapping("/{id}")
-    public ResponseEntity<AvaliacaoModel> updateAvaliacao(@PathVariable Long id, @RequestBody AvaliacaoModel avaliacaoDetails) {
-        Optional<AvaliacaoModel> avaliacaoOptional = avaliacaoRepository.findById(id);
-        if (avaliacaoOptional.isPresent()) {
-            AvaliacaoModel avaliacao = avaliacaoOptional.get();
-            avaliacao.setNota(avaliacaoDetails.getNota());
-            // Outras atualizações, se necessárias
-            AvaliacaoModel updatedAvaliacao = avaliacaoRepository.save(avaliacao);
-            return ResponseEntity.ok(updatedAvaliacao);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-
-    // Deletar uma avaliação
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAvaliacao(@PathVariable Long id) {
-        if (avaliacaoRepository.existsById(id)) {
-            avaliacaoRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
 }
+
