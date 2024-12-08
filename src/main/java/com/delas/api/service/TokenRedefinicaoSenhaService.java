@@ -39,13 +39,5 @@ public class TokenRedefinicaoSenhaService {
         Optional<TokenRedefinicaoSenhaModel> tokenOpt = buscarToken(token);
         return tokenOpt.isPresent() && tokenOpt.get().getDataExpiracao().isAfter(java.time.LocalDateTime.now());
     }
-
-
-
-    // Método para remover o token após a redefinição da senha
-    public void removerToken(TokenRedefinicaoSenhaModel tokenRedefinicao) {
-        tokenRepository.delete(tokenRedefinicao);
-
-
-    }
+    
 }
