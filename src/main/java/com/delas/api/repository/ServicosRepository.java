@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface ServicosRepository extends JpaRepository<ServicosModel, Long> {
 
-    // Buscar serviços por categoria, ignorando case
-    List<ServicosModel> findByCategoriaIgnoreCase(String categoria);
 
     // Buscar serviços por faixa de preço
     List<ServicosModel> findByPrecoBetween(BigDecimal precoMinimo, BigDecimal precoMaximo);
