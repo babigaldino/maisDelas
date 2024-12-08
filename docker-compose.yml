@@ -13,7 +13,8 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
-  app:
+
+  app:  # Certifique-se de que 'app' esteja dentro de 'services'
     depends_on:
       mysql:
         condition: service_healthy
