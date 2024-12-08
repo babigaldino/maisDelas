@@ -1,6 +1,8 @@
 package com.delas.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,15 +25,19 @@ public class UsuarioModel {
     private Long id;
 
     @Column(name = "nome", length = 100, nullable = false)
+    @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
     @Column(name = "email", length = 100, nullable = false, unique = true)
+    @NotBlank(message = "O email é obrigatório.")
     private String email;
 
     @Column(name = "senha", length = 80, nullable = false)
+    @NotBlank(message = "A senha é obrigatória.")
     private String senha;
 
-    @Column(name = "telefone", length = 15)
+    @Column(name = "telefone", length = 15, unique = true)
+    @NotBlank(message = "O telefone é obrigatório.")
     private String telefone;
 
     @Enumerated(EnumType.STRING)
@@ -41,7 +47,8 @@ public class UsuarioModel {
     @Column(name = "bairro", length = 45)
     private String bairro;
 
-    @Column(name = "cep", length = 20)
+    @Column(name = "cep", length = 20, nullable = false)
+    @NotBlank(message = "O cep é obrigatório.")
     private String cep;
 
     @Column(name = "rua", length = 100) // Adicionado o campo "rua"
@@ -52,19 +59,14 @@ public class UsuarioModel {
     private Date datacriacao = new Date(); // Gera a data automaticamente
 
     @Column(name = "cpf", nullable = false, unique = true)
+    @NotBlank(message = "O cpf é obrigatória.")
     private String cpf;
-
-    // Campo para armazenar o token de redefinição
-    @Column(name = "reset_token")
-    private String resetToken;
 
     // Lista de avaliações do usuário
     @ElementCollection
     private List<Integer> avaliacoes = new ArrayList<>();
 
-    // Relacionamento com ContratacaoModel
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContratacaoModel> contratacoes = new ArrayList<>();
+
 
     // Enum para o tipo de usuário
     public enum TipoUsuario {
@@ -73,44 +75,4 @@ public class UsuarioModel {
         PRESTADOR
     }
 
-    // Enum para o gênero (Removido na versão final)
-    public enum Genero {
-        MULHER_CIS,
-        MULHER_TRANS,
-        PREFIRO_NAO_RESPONDER
-    }
-
-    // Método para calcular o ranking
-    public String determinarRanking() {
-        double media = avaliacoes.stream().mapToInt(Integer::intValue).average().orElse(0);
-        int quantidadeServicos = contratacoes.size();
-
-        if (media >= 4.5 && quantidadeServicos >= 50) {
-            return "⭐⭐⭐⭐⭐";
-        } else if (media >= 4.0 && quantidadeServicos >= 30) {
-            return "⭐⭐⭐⭐";
-        } else if (media >= 3.5 && quantidadeServicos >= 20) {
-            return "⭐⭐⭐";
-        } else if (media >= 3.0 && quantidadeServicos >= 10) {
-            return "⭐⭐";
-        } else {
-            return "⭐";
-        }
-    }
-
-    // Método de exemplo para criar um usuário
-    public static UsuarioModel criarUsuarioExemplo() {
-        UsuarioModel usuario = new UsuarioModel();
-        usuario.setNome("João da Silva");
-        usuario.setEmail("joao.silva@email.com");
-        usuario.setSenha("senha123");
-        usuario.setTelefone("1234567890");
-        usuario.setTipo(TipoUsuario.CLIENTE);
-        usuario.setRua("Rua Exemplo"); // Agora a rua está presente
-        usuario.setBairro("Bairro Teste");
-        usuario.setCep("12345-678");
-        usuario.setDatacriacao(new Date());
-        usuario.setCpf("123.456.789-00");
-        return usuario;
-    }
 }
