@@ -15,9 +15,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import com.delas.api.service.TokenRedefinicaoSenhaService;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -54,11 +51,10 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
 
-
     @GetMapping("/reset-password")
     public ResponseEntity<String> validarToken(@RequestParam("token") String token) {
         try {
-            // Usando o método validarToken do service
+
             boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
 
             if (!isValid) {
@@ -70,7 +66,6 @@ public class AuthController {
             return ResponseEntity.status(500).body("Erro ao validar o token.");
         }
     }
-
 
 
     @PostMapping("/reset-password-validate")
@@ -115,7 +110,6 @@ public class AuthController {
     }
 
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
@@ -150,22 +144,9 @@ public class AuthController {
         }
     }
 
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     private EmailService emailService;
-
-    private void sendPasswordResetEmail(String email, String token) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("maisdelas77@gmail.com");
-        message.setTo(email);
-        message.setSubject("Recuperação de Senha");
-        message.setText("Clique no link abaixo para redefinir sua senha:\n" +
-                "http://seusite.com/reset-password?token=" + token);
-
-        mailSender.send(message);
-    }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
