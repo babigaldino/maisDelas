@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +29,7 @@ public class ContratacaoModel {
     private ServicosModel idservicos;
 
 
-    @Column(name = "status", length = 20)
+    @Column(name = "status", length = 20, nullable = false)
     private String status;
 
 
@@ -36,6 +37,6 @@ public class ContratacaoModel {
     private LocalDateTime dataContratacao = LocalDateTime.now();
 
 
-    @Column(name = "comentarios", nullable = false)
+    @Column(name = "comentarios")
     private String comentarios;
 }
