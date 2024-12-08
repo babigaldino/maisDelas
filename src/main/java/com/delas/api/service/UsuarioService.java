@@ -1,6 +1,5 @@
 package com.delas.api.service;
-import com.delas.api.model.TokenRedefinicaoSenhaModel;
-import com.delas.api.dto.UsuarioDTO;
+
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.UsuarioRepository;
 import com.delas.api.repository.TokenRedefinicaoSenhaRepository;
@@ -8,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -28,41 +27,37 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void redefinirSenha(String token, String novaSenha) {
-        // Busca o token de redefinição no banco
-        Optional<TokenRedefinicaoSenhaModel> tokenOpt = tokenRepository.findByToken(token);
-
-        if (tokenOpt.isEmpty()) {
-            throw new IllegalArgumentException("Token inválido ou não encontrado.");
+    // Método para validar o CPF
+    public boolean cpfValido(String cpf) {
+        // Verifica se o CPF é nulo, possui tamanho diferente de 11 ou contém caracteres não numéricos
+        if (cpf == null || cpf.length() != 11 || !cpf.matches("\\d+")) {
+            return false;
         }
 
-        // Valida se o token não está expirado
-        TokenRedefinicaoSenhaModel tokenModel = tokenOpt.get();
-        if (tokenModel.getDataExpiracao().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Token expirado.");
+        // Cálculo dos dígitos verificadores
+        int soma1 = 0, soma2 = 0;
+        for (int i = 0; i < 9; i++) {
+            int digito = Character.getNumericValue(cpf.charAt(i));
+            soma1 += digito * (10 - i);
+            soma2 += digito * (11 - i);
         }
 
-        // Busca o usuário associado ao token
-        UsuarioModel usuario = tokenModel.getId();  // Aqui estamos assumindo que você tem um relacionamento com o usuário
+        int verificador1 = (soma1 * 10) % 11;
+        verificador1 = (verificador1 == 10) ? 0 : verificador1;
 
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não encontrado.");
-        }
+        int verificador2 = ((soma2 + (verificador1 * 2)) * 10) % 11;
+        verificador2 = (verificador2 == 10) ? 0 : verificador2;
 
-        // Criptografa a nova senha
-        String senhaCriptografada = passwordEncoder.encode(novaSenha);
-        usuario.setSenha(senhaCriptografada);
-
-        // Salva o usuário com a nova senha
-        usuarioRepository.save(usuario);
-
-        // Remove o token após o uso
-        tokenRepository.delete(tokenModel);
+        // Verifica se os dígitos verificadores coincidem com os últimos dois dígitos do CPF
+        return verificador1 == Character.getNumericValue(cpf.charAt(9)) &&
+                verificador2 == Character.getNumericValue(cpf.charAt(10));
     }
 
     // Método para salvar um novo usuário
     public UsuarioModel salvarUsuario(UsuarioModel usuario) {
-        // Criptografia da senha antes de salvar
+        if (!cpfValido(usuario.getCpf())) {
+            throw new IllegalArgumentException("CPF inválido!"); // metodo para chamar o usuario//
+        }
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
@@ -77,7 +72,23 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
-    // Método para atualizar um usuário existente
+    // Método para deletar um usuário pelo ID
+    public boolean deletarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+        return true;
+    }
+
+
+
+    // Buscar usuário por email
+    public UsuarioModel findByEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
+    }
+
+
+
+
+    // Regras de negócio para edição de perfil
     public UsuarioModel atualizarUsuario(Long id, UsuarioModel usuarioAtualizado) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNome(usuarioAtualizado.getNome());
@@ -95,101 +106,8 @@ public class UsuarioService {
         }).orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
     }
 
-    // Método para deletar um usuário pelo ID
-    public boolean deletarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
-        return true;
-    }
-
-    // Buscar usuário por email
-    public UsuarioModel findByEmail(String email) {
-        return usuarioRepository.findByEmail(email).orElse(null);
-    }
-
-    // Método para criar um usuário com dados do DTO
-    public UsuarioModel criarUsuario(UsuarioDTO usuarioDTO) {
-        UsuarioModel usuario = new UsuarioModel();
-        usuario.setNome(usuarioDTO.getNome());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setTelefone(usuarioDTO.getTelefone());
-        usuario.setTipo(UsuarioModel.TipoUsuario.valueOf(usuarioDTO.getTipo()));
-        usuario.setRua(usuarioDTO.getRua());
-        usuario.setBairro(usuarioDTO.getBairro());
-        usuario.setCep(usuarioDTO.getCep());
-        usuario.setCpf(usuarioDTO.getCpf());
-
-        // Criptografia da senha
-        usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
-
-        return usuarioRepository.save(usuario);
-    }
-
-    // Método no UsuarioService para buscar por resetToken
-    public Optional<TokenRedefinicaoSenhaModel> findByResetToken(String token) {
-        return tokenRepository.findByToken(token);
-    }
-
-    // Método para atualizar o token no usuário
-    public void atualizarResetToken(String token, String email) {
-        // Busca o usuário pelo email
-        UsuarioModel usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
-
-        // Cria um novo token de redefinição de senha
-        TokenRedefinicaoSenhaModel novoToken = new TokenRedefinicaoSenhaModel();
-        novoToken.setToken(token);
-        novoToken.setId(usuario);
-        novoToken.setDataExpiracao(LocalDateTime.now().plusHours(1)); // Exemplo de expiração do token após 1 hora
-
-        // Salva o novo token no banco
-        tokenRepository.save(novoToken);
-    }
-
-    public String obterRankingPrestador(Long prestadorId) {
-        UsuarioModel prestador = usuarioRepository.findById(prestadorId)
-                .orElseThrow(() -> new RuntimeException("Prestador não encontrado com o ID: " + prestadorId));
-
-        if (prestador.getTipo() != UsuarioModel.TipoUsuario.PRESTADOR) {
-            throw new RuntimeException("O usuário não é um prestador.");
-        }
-
-        return prestador.determinarRanking();
-    }
-
-
-    // Regras de negócio para edição de perfil
-    public UsuarioModel editarPerfil(Long id, UsuarioModel usuarioAtualizado) {
-        // Recuperar o usuário existente no banco de dados
-        UsuarioModel usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
-
-        // Validar alterações permitidas
-        if (!usuarioAtualizado.getEmail().equals(usuarioExistente.getEmail())) {
-            if (usuarioRepository.existsByEmail(usuarioAtualizado.getEmail())) {
-                throw new IllegalArgumentException("E-mail já está em uso por outro usuário.");
-            }
-        }
-
-        if (!usuarioAtualizado.getCpf().equals(usuarioExistente.getCpf())) {
-            if (usuarioRepository.existsByCpf(usuarioAtualizado.getCpf())) {
-                throw new IllegalArgumentException("CPF já está em uso por outro usuário.");
-            }
-        }
-
-        // Atualizar somente os campos permitidos
-        usuarioExistente.setNome(usuarioAtualizado.getNome());
-        usuarioExistente.setEmail(usuarioAtualizado.getEmail());
-        usuarioExistente.setTelefone(usuarioAtualizado.getTelefone());
-        usuarioExistente.setRua(usuarioAtualizado.getRua());
-        usuarioExistente.setBairro(usuarioAtualizado.getBairro());
-        usuarioExistente.setCep(usuarioAtualizado.getCep());
-
-        // Atualizar a senha somente se fornecida
-        if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isEmpty()) {
-            usuarioExistente.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
-        }
-
-        // Persistir alterações
-        return usuarioRepository.save(usuarioExistente);
-    }
 }
+
+
+
+
