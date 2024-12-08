@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,9 +20,10 @@ public class ServicosController {
 
     // Criar um novo serviço
     @PostMapping
-    public ResponseEntity<ServicosModel> createServico(@Valid @RequestBody ServicosModel servico) {
-        ServicosModel novoServico = servicosService.save(servico);
-        return ResponseEntity.status(201).body(novoServico); // Código 201 para criação
+    public ResponseEntity<ServicosModel> createServico(@Valid @RequestBody ServicosModel servico,
+                                                       @RequestParam Long usuarioId) {
+        ServicosModel novoServico = servicosService.save(servico, usuarioId);
+        return ResponseEntity.status(201).body(novoServico);
     }
 
     // Obter todos os serviços
@@ -41,6 +44,20 @@ public class ServicosController {
             return ResponseEntity.noContent().build(); // Código 204 se não houver serviços
         }
         return ResponseEntity.ok(servicosOrdenados); // Código 200
+    }
+    @GetMapping("/after")
+    public List<ServicosModel> getServicosAfter(@RequestParam String dataInicial) {
+        LocalDateTime data = LocalDateTime.parse(dataInicial);
+        return servicosService.findByDataCriacaoAfter(data);
+    }
+
+    @GetMapping("/preco")
+    public ResponseEntity<List<ServicosModel>> buscarPorPreco(
+            @RequestParam("precoMinimo") BigDecimal precoMinimo,
+            @RequestParam("precoMaximo") BigDecimal precoMaximo) {
+
+        List<ServicosModel> servicos = servicosService.buscarServicosPorPreco(precoMinimo, precoMaximo);
+        return ResponseEntity.ok(servicos);
     }
 
     // Obter um serviço específico por ID
@@ -65,18 +82,6 @@ public class ServicosController {
         }
     }
 
-    // Atualizar apenas a nota de um serviço
-    @PatchMapping("/{id}/nota")
-    public ResponseEntity<ServicosModel> updateNotaServico(@PathVariable Long id, @RequestParam Double nota) {
-        try {
-            ServicosModel updatedServico = servicosService.updateNota(id, nota);
-            return ResponseEntity.ok(updatedServico); // Código 200 para sucesso
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(null); // Código 400 se a nota estiver fora do intervalo
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).build(); // Código 404 se não encontrar
-        }
-    }
 
     // Buscar serviços por categoria (com suporte a busca parcial) - Nova funcionalidade
     @GetMapping("/categoria")
