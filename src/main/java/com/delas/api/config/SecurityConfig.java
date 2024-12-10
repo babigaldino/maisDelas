@@ -1,5 +1,4 @@
 package com.delas.api.config;
-
 import com.delas.api.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs REST
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Libera todos os endpoints do AuthController
                         .requestMatchers("/auth/**").permitAll()
