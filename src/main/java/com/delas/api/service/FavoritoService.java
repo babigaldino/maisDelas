@@ -1,49 +1,65 @@
 package com.delas.api.service;
 
+import com.delas.api.dto.FavoritoRequestDTO;
 import com.delas.api.model.FavoritoModel;
+import com.delas.api.model.ServicosModel;
+import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.FavoritoRepository;
+import com.delas.api.repository.ServicosRepository;
+import com.delas.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class FavoritoService {
 
-    private final FavoritoRepository favoritoRepository;
+    @Autowired
+    private FavoritoRepository favoritoRepository;
 
     @Autowired
-    public FavoritoService(FavoritoRepository favoritoRepository) {
-        this.favoritoRepository = favoritoRepository;
-    }
+    private UsuarioRepository usuarioRepository;
 
-    // Método para salvar um novo favorito
+    @Autowired
+    private ServicosRepository servicosRepository;
+
     public FavoritoModel save(FavoritoModel favorito) {
         return favoritoRepository.save(favorito);
     }
 
-    // Método para listar todos os favoritos
     public List<FavoritoModel> findAll() {
         return favoritoRepository.findAll();
     }
 
-    // Método para buscar um favorito pelo ID
     public FavoritoModel findById(Long id) {
         return favoritoRepository.findById(id).orElse(null);
     }
 
-    // Método para atualizar um favorito existente
-    public FavoritoModel update(Long id, FavoritoModel favoritoDetails) {
-        Optional<FavoritoModel> favoritoOptional = favoritoRepository.findById(id);
-        if (favoritoOptional.isPresent()) {
-            FavoritoModel favorito = favoritoOptional.get();
-            return favoritoRepository.save(favorito);
+    // ✅ CORRIGIDO: Aceita FavoritoRequestDTO e faz update real
+    public FavoritoModel update(Long id, FavoritoRequestDTO favoritoDTO,
+                               UsuarioRepository usuarioRepository,
+                               ServicosRepository servicosRepository) {
+        FavoritoModel favorito = favoritoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Favorito não encontrado"));
+
+        if (favoritoDTO.getUsuarioId() != null) {
+            UsuarioModel usuario = usuarioRepository.findById(favoritoDTO.getUsuarioId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            favorito.setUsuarioFavorito(usuario);
         }
-        return null;
+
+        if (favoritoDTO.getServicoId() != null) {
+            ServicosModel servico = servicosRepository.findById(favoritoDTO.getServicoId())
+                    .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+            favorito.setServicoFavorito(servico);
+        }
+
+        return favoritoRepository.save(favorito);
     }
 
-    // Método para deletar um favorito pelo ID
     public boolean deleteById(Long id) {
         if (favoritoRepository.existsById(id)) {
             favoritoRepository.deleteById(id);

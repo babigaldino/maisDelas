@@ -2,21 +2,24 @@ package com.delas.api.controller;
 
 import com.delas.api.dto.LoginDTO;
 import com.delas.api.dto.Request;
+import com.delas.api.dto.UsuarioRequestDTO;
+import com.delas.api.dto.UsuarioResponseDTO;
 import com.delas.api.model.TokenRedefinicaoSenhaModel;
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.TokenRedefinicaoSenhaRepository;
 import com.delas.api.service.EmailService;
 import com.delas.api.service.UsuarioService;
 import com.delas.api.repository.UsuarioRepository;
+import com.delas.api.service.TokenRedefinicaoSenhaService;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
-import com.delas.api.service.TokenRedefinicaoSenhaService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.delas.api.config.JwtUtil;
 
@@ -50,11 +53,12 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/reset-password")
     public ResponseEntity<String> validarToken(@RequestParam("token") String token) {
         try {
-
             boolean isValid = tokenRedefinicaoSenhaService.validarToken(token);
 
             if (!isValid) {
@@ -66,7 +70,6 @@ public class AuthController {
             return ResponseEntity.status(500).body("Erro ao validar o token.");
         }
     }
-
 
     @PostMapping("/reset-password-validate")
     public ResponseEntity<?> redefinirSenha(@RequestBody Request request) {
@@ -87,7 +90,8 @@ public class AuthController {
             }
 
             TokenRedefinicaoSenhaModel resetToken = resetTokenOpt.get();
-            UsuarioModel usuario = resetToken.getId();  // Aqui você deve pegar o usuário associado ao token
+            // ✅ CORRIGIDO: getId() → getUsuario()
+            UsuarioModel usuario = resetToken.getUsuario();
 
             // Criptografa a nova senha
             String senhaCriptografada = passwordEncoder.encode(novaSenha);
@@ -96,19 +100,14 @@ public class AuthController {
             // Salva o usuário com a nova senha
             usuarioRepository.save(usuario);
 
-            // Após redefinir a senha, você pode limpar o token
-            tokenRedefinicaoSenhaRepository.delete(resetToken); // Opcional, dependendo do seu fluxo
+            // Após redefinir a senha, limpa o token
+            tokenRedefinicaoSenhaRepository.delete(resetToken);
 
             return ResponseEntity.ok("Senha redefinida com sucesso.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Erro ao redefinir a senha.");
-//        }
-
-        } finally {
-
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao redefinir a senha: " + e.getMessage());
         }
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
@@ -125,6 +124,7 @@ public class AuthController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
+            response.put("usuario", UsuarioResponseDTO.fromModel(usuario));
             response.put("message", "Login realizado com sucesso.");
 
             return ResponseEntity.ok(response);
@@ -133,20 +133,34 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UsuarioModel usuario) {
+    public ResponseEntity<?> register(@Valid @RequestBody UsuarioRequestDTO usuarioDTO, BindingResult bindingResult) {
+        // ✅ Mostra erros de validação detalhados
+        if (bindingResult.hasErrors()) {
+            Map<String, String> erros = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> {
+                String fieldName = error.getField();
+                String errorMessage = error.getDefaultMessage();
+                erros.put(fieldName, errorMessage);
+            });
+            return ResponseEntity.badRequest().body(Map.of(
+                    "sucesso", false,
+                    "mensagem", "Validação falhou",
+                    "erros", erros));
+        }
+
         try {
-            usuarioService.salvarUsuario(usuario);
-            return ResponseEntity.ok("Usuário registrado com sucesso!");
+            UsuarioModel usuario = usuarioService.salvarUsuario(usuarioDTO);
+            return ResponseEntity.status(201).body(Map.of(
+                    "sucesso", true,
+                    "mensagem", "Usuário registrado com sucesso",
+                    "usuario", UsuarioResponseDTO.fromModel(usuario)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "sucesso", false,
+                    "mensagem", e.getMessage()));
         }
     }
-
-
-    @Autowired
-    private EmailService emailService;
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
@@ -167,5 +181,4 @@ public class AuthController {
 
         return ResponseEntity.ok("E-mail de recuperação enviado.");
     }
-
 }

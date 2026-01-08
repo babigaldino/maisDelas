@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface ServicosRepository extends JpaRepository<ServicosModel, Long> {
 
+    // ✅ CORRIGIDO: Adicionados métodos de ordenação
+    List<ServicosModel> findAllByOrderByNotaAsc();
+    List<ServicosModel> findAllByOrderByNotaDesc();
 
     // Buscar serviços por faixa de preço
     List<ServicosModel> findByPrecoBetween(BigDecimal precoMinimo, BigDecimal precoMaximo);
@@ -25,8 +28,6 @@ public interface ServicosRepository extends JpaRepository<ServicosModel, Long> {
     // Buscar todos os serviços ordenados dinamicamente
     List<ServicosModel> findAll(Sort sort);
 
+    // Buscar por categoria
     List<ServicosModel> findByCategoriaContainingIgnoreCase(String categoria);
-
-
-
 }
