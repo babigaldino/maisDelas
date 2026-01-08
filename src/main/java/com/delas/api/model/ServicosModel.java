@@ -11,7 +11,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "servicos")
+@Table(name = "servicos", indexes = {
+    @Index(name = "idx_servicos_usuario_id", columnList = "usuario_id"),
+    @Index(name = "idx_servicos_categoria", columnList = "categoria")
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,40 +23,39 @@ public class ServicosModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idservicos; 
+    private Long idservicos;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     @NotBlank(message = "A descrição é obrigatória.")
     private String descricao;
 
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(columnDefinition = "NUMERIC(10,2)", nullable = false)
     @DecimalMin(value = "0.0", inclusive = false, message = "O preço deve ser maior que zero.")
-    // Alteração na validação do preço
     private BigDecimal preco;
 
     @Column(length = 70, nullable = false)
     @NotBlank(message = "O título é obrigatório.")
+    @Size(min = 5, max = 70, message = "O título deve ter entre 5 e 70 caracteres.")
     private String titulo;
 
-    @Column(name = "datacriacao_servico", nullable = false, updatable = false) 
+    @Column(name = "data_criacao_servico", nullable = false, updatable = false)
     private LocalDateTime datacriacao = LocalDateTime.now();
 
     @Column(length = 100, nullable = false)
+    @NotBlank(message = "A categoria é obrigatória.")
     private String categoria;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioModel usuario;
 
-
-    @Column
+    @Column(name = "nota", columnDefinition = "NUMERIC(3,2)")
     @DecimalMin(value = "1.0", message = "A nota deve ser no mínimo 1.")
     @DecimalMax(value = "5.0", message = "A nota deve ser no máximo 5.")
     private Double nota;
 
     @PrePersist
     protected void onCreate() {
-        // Verifica se a data não está definida para evitar sobrescrever um valor já existente
         if (this.datacriacao == null) {
             this.datacriacao = LocalDateTime.now();
         }

@@ -1,18 +1,18 @@
 package com.delas.api.service;
 
-
+import com.delas.api.dto.AvaliacaoRequestDTO;
 import com.delas.api.model.AvaliacaoModel;
+import com.delas.api.model.ContratacaoModel;
 import com.delas.api.repository.AvaliacaoRepository;
 import com.delas.api.repository.ContratacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
 @Service
+@Transactional
 public class AvaliacaoService {
 
     @Autowired
@@ -21,16 +21,48 @@ public class AvaliacaoService {
     @Autowired
     private ContratacaoRepository contratacaoRepository;
 
+    // ✅ CORRIGIDO: Removido @PostMapping (é de Controller!)
+    // ✅ CORRIGIDO: Aceita AvaliacaoRequestDTO
+    // ✅ CORRIGIDO: Retorna AvaliacaoModel, não ResponseEntity
+    public AvaliacaoModel save(AvaliacaoRequestDTO avaliacaoDTO) {
+        ContratacaoModel contratacao = contratacaoRepository.findById(avaliacaoDTO.getContratacaoId())
+                .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
 
-    @PostMapping("/avaliacao")
-    public ResponseEntity<AvaliacaoModel> createAvaliacao(@RequestBody AvaliacaoModel avaliacao) {
-        try {
-            AvaliacaoModel savedAvaliacao = avaliacaoRepository.save(avaliacao);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedAvaliacao);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        AvaliacaoModel avaliacao = new AvaliacaoModel();
+        avaliacao.setContratacao(contratacao);
+        avaliacao.setNota(avaliacaoDTO.getNota());
+        avaliacao.setComentario(avaliacaoDTO.getComentario());
+
+        return avaliacaoRepository.save(avaliacao);
     }
 
+    public List<AvaliacaoModel> findAll() {
+        return avaliacaoRepository.findAll();
+    }
+
+    public AvaliacaoModel findById(Long id) {
+        return avaliacaoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
+    }
+
+    public AvaliacaoModel update(Long id, AvaliacaoRequestDTO avaliacaoDTO) {
+        AvaliacaoModel avaliacao = findById(id);
+
+        if (avaliacaoDTO.getNota() != null) {
+            avaliacao.setNota(avaliacaoDTO.getNota());
+        }
+        if (avaliacaoDTO.getComentario() != null) {
+            avaliacao.setComentario(avaliacaoDTO.getComentario());
+        }
+
+        return avaliacaoRepository.save(avaliacao);
+    }
+
+    public boolean deleteById(Long id) {
+        if (avaliacaoRepository.existsById(id)) {
+            avaliacaoRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

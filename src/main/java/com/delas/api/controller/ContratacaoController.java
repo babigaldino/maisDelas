@@ -1,11 +1,21 @@
 package com.delas.api.controller;
 
+import com.delas.api.dto.ContratacaoRequestDTO;
+import com.delas.api.dto.ContratacaoResponseDTO;
 import com.delas.api.model.ContratacaoModel;
+import com.delas.api.model.ServicosModel;
+import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.ContratacaoRepository;
+import com.delas.api.repository.ServicosRepository;
+import com.delas.api.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/contratacao")
@@ -14,55 +24,98 @@ public class ContratacaoController {
     @Autowired
     private ContratacaoRepository contratacaoRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ServicosRepository servicosRepository;
+
     @PostMapping
-    public ContratacaoModel createContratacao(@RequestBody ContratacaoModel contratacao) {
-        return contratacaoRepository.save(contratacao);
+    public ResponseEntity<ContratacaoResponseDTO> createContratacao(
+            @Valid @RequestBody ContratacaoRequestDTO contratoDTO) {
+        try {
+            // Busca usuário e serviço
+            UsuarioModel usuario = usuarioRepository.findById(contratoDTO.getUsuarioId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+            ServicosModel servico = servicosRepository.findById(contratoDTO.getServicoId())
+                    .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+
+            // Cria a contratação
+            ContratacaoModel contratacao = new ContratacaoModel();
+            contratacao.setUsuario(usuario);
+            contratacao.setServico(servico);
+            contratacao.setStatus(ContratacaoModel.StatusContratacao.valueOf(contratoDTO.getStatus()));
+            contratacao.setComentarios(contratoDTO.getComentarios());
+
+            ContratacaoModel saved = contratacaoRepository.save(contratacao);
+            return ResponseEntity.status(201).body(ContratacaoResponseDTO.fromModel(saved));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping
-    public List<ContratacaoModel> getAllContratacoes() {
-        return contratacaoRepository.findAll();
+    public ResponseEntity<List<ContratacaoResponseDTO>> getAllContratacoes() {
+        List<ContratacaoResponseDTO> contratacoes = contratacaoRepository.findAll()
+                .stream()
+                .map(ContratacaoResponseDTO::fromModel)
+                .collect(Collectors.toList());
+        if (contratacoes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(contratacoes);
     }
 
     @GetMapping("/{id}")
-    public ContratacaoModel getContratacaoById(@PathVariable Long id) {
-        return contratacaoRepository.findById(id).orElse(null);
+    public ResponseEntity<ContratacaoResponseDTO> getContratacaoById(@PathVariable Long id) {
+        return contratacaoRepository.findById(id)
+                .map(contratacao -> ResponseEntity.ok(ContratacaoResponseDTO.fromModel(contratacao)))
+                .orElseGet(() -> ResponseEntity.status(404).build());
     }
 
     @PutMapping("/{id}")
-    public ContratacaoModel updateContratacao(@PathVariable Long id, @RequestBody ContratacaoModel contratacaoDetails) {
-        ContratacaoModel contratacao = contratacaoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
+    public ResponseEntity<ContratacaoResponseDTO> updateContratacao(
+            @PathVariable Long id,
+            @Valid @RequestBody ContratacaoRequestDTO contratoDetails) {
+        try {
+            ContratacaoModel contratacao = contratacaoRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
 
-        // Atualize apenas os campos não nulos da requisição
-        if (contratacaoDetails.getComentarios() != null) {
-            contratacao.setComentarios(contratacaoDetails.getComentarios());
-        }
-        if (contratacaoDetails.getDataContratacao() != null) {
-            contratacao.setDataContratacao(contratacaoDetails.getDataContratacao());
-        }
-        if (contratacaoDetails.getId() != null) {
-            contratacao.setId(contratacaoDetails.getId());
-        }
-        if (contratacaoDetails.getIdservicos() != null) {
-            contratacao.setIdservicos(contratacaoDetails.getIdservicos());
-        }
-        if (contratacaoDetails.getStatus() != null) {
-            contratacao.setStatus(contratacaoDetails.getStatus());
-        }
-        // Corrigindo: Acessando o idservicos corretamente
-        if (contratacaoDetails.getIdservicos() != null && contratacaoDetails.getIdservicos().getIdservicos() != null) {
-            contratacao.getIdservicos().setIdservicos(contratacaoDetails.getIdservicos().getIdservicos());
-        }
+            // ✅ CORRIGIDO: Usar setUsuario() e setServico()
+            if (contratoDetails.getUsuarioId() != null) {
+                UsuarioModel usuario = usuarioRepository.findById(contratoDetails.getUsuarioId())
+                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                contratacao.setUsuario(usuario);
+            }
 
+            if (contratoDetails.getServicoId() != null) {
+                ServicosModel servico = servicosRepository.findById(contratoDetails.getServicoId())
+                        .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+                contratacao.setServico(servico);
+            }
 
-        return contratacaoRepository.save(contratacao);
+            if (contratoDetails.getStatus() != null) {
+                contratacao.setStatus(ContratacaoModel.StatusContratacao.valueOf(contratoDetails.getStatus()));
+            }
+
+            if (contratoDetails.getComentarios() != null) {
+                contratacao.setComentarios(contratoDetails.getComentarios());
+            }
+
+            ContratacaoModel updated = contratacaoRepository.save(contratacao);
+            return ResponseEntity.ok(ContratacaoResponseDTO.fromModel(updated));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).build();
+        }
     }
-
 
     @DeleteMapping("/{id}")
-    public void deleteContratacao(@PathVariable Long id) {
-        contratacaoRepository.deleteById(id);
+    public ResponseEntity<Void> deleteContratacao(@PathVariable Long id) {
+        if (contratacaoRepository.existsById(id)) {
+            contratacaoRepository.deleteById(id);
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.status(404).build();
     }
 }
-
