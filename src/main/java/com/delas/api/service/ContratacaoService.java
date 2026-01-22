@@ -28,6 +28,14 @@ public class ContratacaoService {
         return contratacaoRepository.findById(id);
     }
 
+   public ContratacaoModel atualizarStatus(Long id, String novoStatus) {
+    ContratacaoModel contratacao = contratacaoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
+
+    contratacao.setStatus(ContratacaoModel.StatusContratacao.valueOf(novoStatus));
+    
+    return contratacaoRepository.save(contratacao); // ✅ Adicione o return aqui!
+}
     public boolean deleteById(Long id) {
         if (contratacaoRepository.existsById(id)) {
             contratacaoRepository.deleteById(id);
@@ -39,4 +47,9 @@ public class ContratacaoService {
     public List<ContratacaoModel> findByStatus(String status) {
         return contratacaoRepository.findByStatus(status);
     }
+
+    public List<ContratacaoModel> findByUsuarioId(Long usuarioId) {
+        return contratacaoRepository.findByUsuarioId(usuarioId);
+    }
+
 }

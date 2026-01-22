@@ -3,9 +3,7 @@ package com.delas.api.controller;
 import com.delas.api.dto.AvaliacaoRequestDTO;
 import com.delas.api.dto.AvaliacaoResponseDTO;
 import com.delas.api.model.AvaliacaoModel;
-import com.delas.api.model.ContratacaoModel;
-import com.delas.api.repository.AvaliacaoRepository;
-import com.delas.api.repository.ContratacaoRepository;
+import com.delas.api.service.AvaliacaoService; 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,33 +18,29 @@ import java.util.stream.Collectors;
 public class AvaliacaoController {
 
     @Autowired
-    private AvaliacaoRepository avaliacaoRepository;
-
-    @Autowired
-    private ContratacaoRepository contratacaoRepository;
+    private AvaliacaoService avaliacaoService; 
 
     @PostMapping
     public ResponseEntity<AvaliacaoResponseDTO> createAvaliacao(
             @Valid @RequestBody AvaliacaoRequestDTO avaliacaoDTO) {
         try {
-            ContratacaoModel contratacao = contratacaoRepository.findById(avaliacaoDTO.getContratacaoId())
-                    .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
-
-            AvaliacaoModel avaliacao = new AvaliacaoModel();
-            avaliacao.setContratacao(contratacao);
-            avaliacao.setNota(avaliacaoDTO.getNota());
-            avaliacao.setComentario(avaliacaoDTO.getComentario());
-
-            AvaliacaoModel saved = avaliacaoRepository.save(avaliacao);
-            return ResponseEntity.status(201).body(AvaliacaoResponseDTO.fromModel(saved));
+            System.out.println("🟢 [CONTROLLER] Recebeu POST /avaliacao");
+            System.out.println("🟢 ContratacaoId: " + avaliacaoDTO.getContratacaoId() + ", Nota: " + avaliacaoDTO.getNota());
+            
+           
+            AvaliacaoModel saved = avaliacaoService.save(avaliacaoDTO);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(AvaliacaoResponseDTO.fromModel(saved));
         } catch (Exception e) {
+            System.err.println("❌ Erro no controller: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping
     public ResponseEntity<List<AvaliacaoResponseDTO>> getAllAvaliacoes() {
-        List<AvaliacaoResponseDTO> avaliacoes = avaliacaoRepository.findAll()
+        List<AvaliacaoResponseDTO> avaliacoes = avaliacaoService.findAll()
                 .stream()
                 .map(AvaliacaoResponseDTO::fromModel)
                 .collect(Collectors.toList());
@@ -58,9 +52,12 @@ public class AvaliacaoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AvaliacaoResponseDTO> getAvaliacaoById(@PathVariable Long id) {
-        return avaliacaoRepository.findById(id)
-                .map(avaliacao -> ResponseEntity.ok(AvaliacaoResponseDTO.fromModel(avaliacao)))
-                .orElseGet(() -> ResponseEntity.status(404).build());
+        try {
+            AvaliacaoModel avaliacao = avaliacaoService.findById(id);
+            return ResponseEntity.ok(AvaliacaoResponseDTO.fromModel(avaliacao));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PutMapping("/{id}")
@@ -68,30 +65,21 @@ public class AvaliacaoController {
             @PathVariable Long id,
             @Valid @RequestBody AvaliacaoRequestDTO avaliacaoDetails) {
         try {
-            AvaliacaoModel avaliacao = avaliacaoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
-
-            if (avaliacaoDetails.getNota() != null) {
-                avaliacao.setNota(avaliacaoDetails.getNota());
-            }
-
-            if (avaliacaoDetails.getComentario() != null) {
-                avaliacao.setComentario(avaliacaoDetails.getComentario());
-            }
-
-            AvaliacaoModel updated = avaliacaoRepository.save(avaliacao);
+           
+            AvaliacaoModel updated = avaliacaoService.update(id, avaliacaoDetails);
             return ResponseEntity.ok(AvaliacaoResponseDTO.fromModel(updated));
         } catch (Exception e) {
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAvaliacao(@PathVariable Long id) {
-        if (avaliacaoRepository.existsById(id)) {
-            avaliacaoRepository.deleteById(id);
-            return ResponseEntity.status(204).build();
+       
+        boolean deleted = avaliacaoService.deleteById(id);
+        if (deleted) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(404).build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

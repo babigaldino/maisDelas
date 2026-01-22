@@ -51,4 +51,11 @@ public class UsuarioRequestDTO {
         message = "CPF deve estar no formato XXX.XXX.XXX-XX ou XXXXXXXXXXX"
     )
     private String cpf;
+
+    private String cidade;
+
+    private Double latitude;
+    
+    private Double longitude;
+    
 }

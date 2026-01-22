@@ -19,7 +19,6 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final CorsConfigurationSource corsConfigurationSource;
 
-    // Construtor com injeção de dependência de JwtFilter e CorsConfigurationSource
     public SecurityConfig(JwtFilter jwtFilter, CorsConfigurationSource corsConfigurationSource) {
         this.jwtFilter = jwtFilter;
         this.corsConfigurationSource = corsConfigurationSource;
@@ -28,41 +27,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desabilita CSRF para APIs REST
-                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // ✅ CORS ATIVO
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
-                        // Libera todos os endpoints do AuthController
                         .requestMatchers("/auth/**").permitAll()
-                        // Libera os endpoints do Swagger para acesso sem autenticação
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        // Libera GET /servicos (listar serviços públicos)
+                        // ✅ Libera rotas públicas
                         .requestMatchers("GET", "/servicos").permitAll()
-                        // Exige autenticação para qualquer outra rota
+                        .requestMatchers("GET", "/usuario/**").permitAll()  // ✅ ADICIONE
+                        
+                    
+                        .requestMatchers("/favorito/**").permitAll()  // ✅ ADICIONE
+                        
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Define que a sessão será stateless
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        // Adiciona o filtro JWT antes do UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Bean para codificação de senhas
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Usado para criptografar senhas no registro
+        return new BCryptPasswordEncoder();
     }
 
-    // Bean para o AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager(); // Fornece o AuthenticationManager configurado
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

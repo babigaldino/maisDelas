@@ -1,6 +1,6 @@
-
 package com.delas.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -60,6 +60,15 @@ public class UsuarioModel {
     @Column(name = "rua", length = 100)
     private String rua;
 
+    @Column(name = "cidade", length = 100, nullable = false)
+    private String cidade = "Recife";
+
+    @Column(name = "latitude", columnDefinition = "DECIMAL(10, 8)")
+    private Double latitude;
+
+    @Column(name = "longitude", columnDefinition = "DECIMAL(11, 8)")
+    private Double longitude;
+
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
@@ -67,12 +76,23 @@ public class UsuarioModel {
     @NotBlank(message = "O CPF é obrigatório.")
     private String cpf;
 
+    @Column(name = "foto")
+    private String foto;
+
+    @Column(name = "bio", length = 500)
+    private String bio;
+
+    // ✅ NOVO: Campo para média calculada da prestadora
+    @Column(name = "nota", columnDefinition = "DECIMAL(3, 2) DEFAULT 0.0")
+    private Double nota = 0.0;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "usuario_avaliacoes", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "avaliacao")
     private List<Integer> avaliacoes = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ServicosModel> servicos = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -82,6 +102,9 @@ public class UsuarioModel {
     protected void onCreate() {
         if (this.dataCriacao == null) {
             this.dataCriacao = LocalDateTime.now();
+        }
+        if (this.nota == null) {
+            this.nota = 0.0;
         }
     }
 

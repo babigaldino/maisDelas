@@ -44,11 +44,19 @@ public class UsuarioService {
                 verificador2 == Character.getNumericValue(cpf.charAt(10));
     }
 
-    // ✅ CORRIGIDO: Aceita UsuarioRequestDTO
     public UsuarioModel salvarUsuario(UsuarioRequestDTO usuarioDTO) {
         // if (!cpfValido(usuarioDTO.getCpf())) {
         //     throw new IllegalArgumentException("CPF inválido!");
         // }
+
+        // Validação de usuário duplicado
+        if (usuarioRepository.existsByEmail(usuarioDTO.getEmail())) {
+            throw new RuntimeException("Email já cadastrado");
+        }
+
+        if (usuarioRepository.existsByCpf(usuarioDTO.getCpf())) {
+            throw new RuntimeException("CPF já cadastrado");
+        }
 
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNome(usuarioDTO.getNome());
@@ -60,11 +68,14 @@ public class UsuarioService {
         usuario.setCep(usuarioDTO.getCep());
         usuario.setRua(usuarioDTO.getRua());
         usuario.setCpf(usuarioDTO.getCpf());
+        usuario.setCidade(usuarioDTO.getCidade() != null ? usuarioDTO.getCidade() : "Recife");
+        usuario.setLatitude(usuarioDTO.getLatitude());
+        usuario.setLongitude(usuarioDTO.getLongitude());
+       
 
         return usuarioRepository.save(usuario);
     }
 
-    // ✅ CORRIGIDO: Aceita UsuarioRequestDTO
     public UsuarioModel atualizarUsuario(Long id, UsuarioRequestDTO usuarioDTO) {
         UsuarioModel usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -77,6 +88,17 @@ public class UsuarioService {
         usuario.setCep(usuarioDTO.getCep());
         usuario.setRua(usuarioDTO.getRua());
         usuario.setCpf(usuarioDTO.getCpf());
+
+        // ✨ NOVOS CAMPOS
+        if (usuarioDTO.getCidade() != null) {
+            usuario.setCidade(usuarioDTO.getCidade());
+        }
+        if (usuarioDTO.getLatitude() != null) {
+            usuario.setLatitude(usuarioDTO.getLatitude());
+        }
+        if (usuarioDTO.getLongitude() != null) {
+            usuario.setLongitude(usuarioDTO.getLongitude());
+        }
 
         // Atualiza senha apenas se foi fornecida
         if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty()) {

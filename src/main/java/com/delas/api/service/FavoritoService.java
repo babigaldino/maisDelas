@@ -26,6 +26,37 @@ public class FavoritoService {
     @Autowired
     private ServicosRepository servicosRepository;
 
+    public List<UsuarioModel> findPrestadorasFavoritas(Long usuarioId) {
+        return favoritoRepository.findPrestadorasFavoritasByUsuarioId(usuarioId);
+    }
+
+    public FavoritoModel addFavorito(Long usuarioId, Long servicoId) {
+        // Verifica se já existe
+        if (favoritoRepository.existsByUsuarioFavoritoIdAndServicoFavoritoId(usuarioId, servicoId)) {
+            throw new RuntimeException("Serviço já está nos favoritos");
+        }
+        
+        UsuarioModel usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        
+        ServicosModel servico = servicosRepository.findById(servicoId)
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+        
+        FavoritoModel favorito = new FavoritoModel();
+        favorito.setUsuarioFavorito(usuario);
+        favorito.setServicoFavorito(servico);
+        
+        return favoritoRepository.save(favorito);
+    }
+
+    public void removeFavorito(Long usuarioId, Long servicoId) {
+        favoritoRepository.deleteByUsuarioFavoritoIdAndServicoFavoritoId(usuarioId, servicoId);
+    }
+
+    public boolean isFavorito(Long usuarioId, Long servicoId) {
+        return favoritoRepository.existsByUsuarioFavoritoIdAndServicoFavoritoId(usuarioId, servicoId);
+    }
+
     public FavoritoModel save(FavoritoModel favorito) {
         return favoritoRepository.save(favorito);
     }
@@ -33,12 +64,15 @@ public class FavoritoService {
     public List<FavoritoModel> findAll() {
         return favoritoRepository.findAll();
     }
+    
+    public List<FavoritoModel> findByUsuarioId(Long usuarioId) {
+        return favoritoRepository.findByUsuarioFavoritoId(usuarioId);
+    }
 
     public FavoritoModel findById(Long id) {
         return favoritoRepository.findById(id).orElse(null);
     }
 
-    // ✅ CORRIGIDO: Aceita FavoritoRequestDTO e faz update real
     public FavoritoModel update(Long id, FavoritoRequestDTO favoritoDTO,
                                UsuarioRepository usuarioRepository,
                                ServicosRepository servicosRepository) {
