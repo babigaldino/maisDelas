@@ -1,5 +1,6 @@
 package com.delas.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -47,17 +48,21 @@ public class ServicosModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference
     private UsuarioModel usuario;
 
-    @Column(name = "nota", columnDefinition = "NUMERIC(3,2)")
-    @DecimalMin(value = "1.0", message = "A nota deve ser no mínimo 1.")
-    @DecimalMax(value = "5.0", message = "A nota deve ser no máximo 5.")
-    private Double nota;
+    
+    @Column(name = "nota", columnDefinition = "NUMERIC(3,2) DEFAULT 0.0")
+    private Double nota = 0.0;
 
     @PrePersist
     protected void onCreate() {
         if (this.datacriacao == null) {
             this.datacriacao = LocalDateTime.now();
+        }
+        
+        if (this.nota == null) {
+            this.nota = 0.0;
         }
     }
 }

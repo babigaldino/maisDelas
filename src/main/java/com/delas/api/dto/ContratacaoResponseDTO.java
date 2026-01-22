@@ -13,25 +13,50 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContratacaoResponseDTO {
-    private Long idcontratacao;
-    private Long usuarioId;
-    private String usuarioNome;
+    private Long id;
+    private String status;
+    private String comentarios;
+    private LocalDateTime dataContratacao; 
+    
+    
+    private Long clienteId;
+    private String clienteNome;
+    
+    // Dados do serviço
     private Long servicoId;
     private String servicoTitulo;
-    private String status;
-    private LocalDateTime dataContratacao;
-    private String comentarios;
-
+    private String servicoDescricao;
+    private Double servicoPreco;
+    
+    // Dados da prestadora
+    private Long prestadoraId;
+    private String prestadoraNome;
+    
     public static ContratacaoResponseDTO fromModel(ContratacaoModel contratacao) {
-        return new ContratacaoResponseDTO(
-                contratacao.getIdcontratacao(),
-                contratacao.getUsuario().getId(),
-                contratacao.getUsuario().getNome(),
-                contratacao.getServico().getIdservicos(),
-                contratacao.getServico().getTitulo(),
-                contratacao.getStatus().toString(),
-                contratacao.getDataContratacao(),
-                contratacao.getComentarios()
-        );
+        ContratacaoResponseDTO dto = new ContratacaoResponseDTO();
+        dto.setId(contratacao.getIdcontratacao());
+        dto.setStatus(contratacao.getStatus().toString());
+        dto.setComentarios(contratacao.getComentarios());
+        dto.setDataContratacao(contratacao.getDataContratacao()); 
+        
+        
+        if (contratacao.getUsuario() != null) {
+            dto.setClienteId(contratacao.getUsuario().getId());
+            dto.setClienteNome(contratacao.getUsuario().getNome());
+        }
+        
+        if (contratacao.getServico() != null) {
+            dto.setServicoId(contratacao.getServico().getIdservicos());
+            dto.setServicoTitulo(contratacao.getServico().getTitulo());
+            dto.setServicoDescricao(contratacao.getServico().getDescricao());
+            dto.setServicoPreco(contratacao.getServico().getPreco().doubleValue());
+            
+            if (contratacao.getServico().getUsuario() != null) {
+                dto.setPrestadoraId(contratacao.getServico().getUsuario().getId());
+                dto.setPrestadoraNome(contratacao.getServico().getUsuario().getNome());
+            }
+        }
+        
+        return dto;
     }
 }

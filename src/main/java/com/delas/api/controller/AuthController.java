@@ -30,6 +30,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     @Autowired
@@ -90,7 +91,6 @@ public class AuthController {
             }
 
             TokenRedefinicaoSenhaModel resetToken = resetTokenOpt.get();
-            // ✅ CORRIGIDO: getId() → getUsuario()
             UsuarioModel usuario = resetToken.getUsuario();
 
             // Criptografa a nova senha

@@ -30,4 +30,6 @@ public interface ServicosRepository extends JpaRepository<ServicosModel, Long> {
 
     // Buscar por categoria
     List<ServicosModel> findByCategoriaContainingIgnoreCase(String categoria);
+
+    List<ServicosModel> findByUsuarioId(Long usuarioId);
 }

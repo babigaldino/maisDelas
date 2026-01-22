@@ -8,6 +8,8 @@ import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.ContratacaoRepository;
 import com.delas.api.repository.ServicosRepository;
 import com.delas.api.repository.UsuarioRepository;
+import com.delas.api.service.ContratacaoService;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,18 +33,20 @@ public class ContratacaoController {
     @Autowired
     private ServicosRepository servicosRepository;
 
+    // ✅ ADICIONE a injeção do service
+    @Autowired
+    private ContratacaoService contratacaoService;
+
     @PostMapping
     public ResponseEntity<ContratacaoResponseDTO> createContratacao(
             @Valid @RequestBody ContratacaoRequestDTO contratoDTO) {
         try {
-            // Busca usuário e serviço
             UsuarioModel usuario = usuarioRepository.findById(contratoDTO.getUsuarioId())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
             ServicosModel servico = servicosRepository.findById(contratoDTO.getServicoId())
                     .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
 
-            // Cria a contratação
             ContratacaoModel contratacao = new ContratacaoModel();
             contratacao.setUsuario(usuario);
             contratacao.setServico(servico);
@@ -82,7 +87,6 @@ public class ContratacaoController {
             ContratacaoModel contratacao = contratacaoRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Contratação não encontrada"));
 
-            // ✅ CORRIGIDO: Usar setUsuario() e setServico()
             if (contratoDetails.getUsuarioId() != null) {
                 UsuarioModel usuario = usuarioRepository.findById(contratoDetails.getUsuarioId())
                         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -117,5 +121,34 @@ public class ContratacaoController {
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(404).build();
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<ContratacaoResponseDTO>> getContratacoesByUsuario(@PathVariable Long usuarioId) {
+        List<ContratacaoResponseDTO> contratacoes = contratacaoRepository.findByUsuarioId(usuarioId)
+                .stream()
+                .map(ContratacaoResponseDTO::fromModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(contratacoes);
+    }
+
+    @GetMapping("/prestadora/{prestadoraId}")
+    public ResponseEntity<List<ContratacaoResponseDTO>> getContratacoesByPrestadora(@PathVariable Long prestadoraId) {
+        List<ContratacaoResponseDTO> contratacoes = contratacaoRepository.findByPrestadoraId(prestadoraId)
+                .stream()
+                .map(ContratacaoResponseDTO::fromModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(contratacoes);
+    }
+
+    
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ContratacaoResponseDTO> atualizarStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        String novoStatus = body.get("status");
+        ContratacaoModel contratacao = contratacaoService.atualizarStatus(id, novoStatus);
+        return ResponseEntity.ok(ContratacaoResponseDTO.fromModel(contratacao));
     }
 }

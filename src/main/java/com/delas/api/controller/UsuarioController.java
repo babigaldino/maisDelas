@@ -2,11 +2,12 @@ package com.delas.api.controller;
 
 import com.delas.api.dto.UsuarioRequestDTO;
 import com.delas.api.dto.UsuarioResponseDTO;
+import com.delas.api.model.ServicosModel;
 import com.delas.api.model.UsuarioModel;
+import com.delas.api.repository.ServicosRepository;
 import com.delas.api.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,9 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private ServicosRepository servicosRepository;
+
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> getAllUsuarios() {
         List<UsuarioResponseDTO> usuarios = usuarioService.listarUsuarios()
@@ -32,26 +36,43 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
         return usuarioService.buscarUsuarioPorId(id)
-                .map(usuario -> ResponseEntity.ok(UsuarioResponseDTO.fromModel(usuario)))
+                .map(usuario -> {
+                    UsuarioResponseDTO dto = UsuarioResponseDTO.fromModel(usuario);
+                    
+                    // ✅ ADICIONA SERVIÇOS se for PRESTADOR
+                    if (usuario.getTipo() == UsuarioModel.TipoUsuario.PRESTADOR) {
+                        List<ServicosModel> servicos = servicosRepository.findByUsuarioId(usuario.getId());
+                        dto.setServicos(servicos);
+                    }
+                    
+                    return ResponseEntity.ok(dto);
+                })
                 .orElseGet(() -> ResponseEntity.status(404).build());
     }
 
-    // ✅ ROTA CORRIGIDA - Buscar usuários por tipo (enum)
     @GetMapping("/tipo/{tipo}")
     public ResponseEntity<List<UsuarioResponseDTO>> getUsuariosPorTipo(@PathVariable String tipo) {
         try {
-            // Converte String para enum (ex: "PRESTADOR" -> TipoUsuario.PRESTADOR)
             String tipoUpperCase = tipo.toUpperCase();
             
             List<UsuarioResponseDTO> usuarios = usuarioService.listarUsuarios()
                     .stream()
                     .filter(usuario -> usuario.getTipo().toString().equals(tipoUpperCase))
-                    .map(UsuarioResponseDTO::fromModel)
+                    .map(usuario -> {
+                        UsuarioResponseDTO dto = UsuarioResponseDTO.fromModel(usuario);
+                        
+                        // ✅ ADICIONA SERVIÇOS se for PRESTADOR
+                        if (usuario.getTipo() == UsuarioModel.TipoUsuario.PRESTADOR) {
+                            List<ServicosModel> servicos = servicosRepository.findByUsuarioId(usuario.getId());
+                            dto.setServicos(servicos);
+                        }
+                        
+                        return dto;
+                    })
                     .collect(Collectors.toList());
             
             return ResponseEntity.ok(usuarios);
         } catch (IllegalArgumentException e) {
-            // Se o tipo for inválido
             return ResponseEntity.badRequest().build();
         }
     }
