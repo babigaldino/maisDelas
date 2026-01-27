@@ -51,8 +51,8 @@ public class ServicosModel {
     @JsonBackReference
     private UsuarioModel usuario;
 
-    @Column(name = "nota", precision = 3, scale = 2)
-    private Double nota = 0.0;
+   @Column(name = "nota", precision = 3, scale = 2)
+    private BigDecimal nota = BigDecimal.ZERO;
 
     @PrePersist
     protected void onCreate() {
@@ -61,7 +61,7 @@ public class ServicosModel {
         }
 
         if (this.nota == null) {
-            this.nota = 0.0;
+            this.nota = BigDecimal.ZERO;
         }
     }
 }

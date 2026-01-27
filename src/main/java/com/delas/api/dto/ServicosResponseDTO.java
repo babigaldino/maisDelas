@@ -13,18 +13,17 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class ServicosResponseDTO {
+
     private Long idservicos;
     private String descricao;
     private BigDecimal preco;
     private String titulo;
     private LocalDateTime datacriacao;
     private String categoria;
-    private Double nota;
-    
-    
+    private BigDecimal nota;
+
     private UsuarioSimplificadoDTO usuario;
-    
-   
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -44,9 +43,8 @@ public class ServicosResponseDTO {
         dto.setTitulo(servico.getTitulo());
         dto.setDatacriacao(servico.getDatacriacao());
         dto.setCategoria(servico.getCategoria());
-        dto.setNota(servico.getNota());
-        
-       
+        dto.setNota(servico.getNota()); // BigDecimal direto
+
         if (servico.getUsuario() != null) {
             UsuarioSimplificadoDTO usuarioDTO = new UsuarioSimplificadoDTO();
             usuarioDTO.setId(servico.getUsuario().getId());
@@ -55,7 +53,7 @@ public class ServicosResponseDTO {
             usuarioDTO.setTipoUsuario(servico.getUsuario().getTipo().name());
             dto.setUsuario(usuarioDTO);
         }
-        
+
         return dto;
     }
 }

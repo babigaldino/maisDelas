@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 public class AvaliacaoResponseDTO {
     private Long idavaliacao;
     private Long contratacaoId;
-    private Double nota;
+    private BigDecimal nota;
     private String comentario;
     private LocalDateTime dataAvaliacao;
 

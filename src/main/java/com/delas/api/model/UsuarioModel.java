@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "usuario", indexes = {
-    @Index(name = "idx_usuario_email", columnList = "email"),
-    @Index(name = "idx_usuario_cpf", columnList = "cpf"),
-    @Index(name = "idx_usuario_telefone", columnList = "telefone")
+        @Index(name = "idx_usuario_email", columnList = "email"),
+        @Index(name = "idx_usuario_cpf", columnList = "cpf"),
+        @Index(name = "idx_usuario_telefone", columnList = "telefone")
 })
 public class UsuarioModel {
 
@@ -83,7 +84,7 @@ public class UsuarioModel {
     private String bio;
 
     @Column(name = "nota", precision = 3, scale = 2)
-    private Double nota = 0.0;
+    private BigDecimal nota = BigDecimal.ZERO;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "usuario_avaliacoes", joinColumns = @JoinColumn(name = "usuario_id"))
@@ -103,7 +104,7 @@ public class UsuarioModel {
             this.dataCriacao = LocalDateTime.now();
         }
         if (this.nota == null) {
-            this.nota = 0.0;
+            this.nota = BigDecimal.ZERO;
         }
     }
 

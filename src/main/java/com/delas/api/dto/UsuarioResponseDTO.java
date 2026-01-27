@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioResponseDTO {
+
     private Long id;
     private String nome;
     private String email;
@@ -31,8 +33,8 @@ public class UsuarioResponseDTO {
     private String bio;
     private String foto;
     private LocalDateTime dataCriacao;
-    private Double nota;
-    
+    private BigDecimal nota;
+
     private List<ServicosModel> servicos = new ArrayList<>();
     private List<Object> avaliacoes = new ArrayList<>();
 
@@ -53,8 +55,8 @@ public class UsuarioResponseDTO {
         dto.setBio(usuario.getBio());
         dto.setFoto(usuario.getFoto());
         dto.setDataCriacao(usuario.getDataCriacao());
-        dto.setNota(usuario.getNota() != null ? usuario.getNota() : 0.0);
-        
+        dto.setNota(usuario.getNota() != null ? usuario.getNota() : BigDecimal.ZERO);
+
         return dto;
     }
 }
