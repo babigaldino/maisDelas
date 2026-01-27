@@ -23,7 +23,6 @@ public class ServicosService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // ✅ CORRIGIDO: Aceita ServicosRequestDTO
     public ServicosModel save(ServicosRequestDTO servicoDTO, Long usuarioId) {
         UsuarioModel usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -42,7 +41,6 @@ public class ServicosService {
         return servicosRepository.save(servico);
     }
 
-    // ✅ CORRIGIDO: Aceita ServicosRequestDTO
     public ServicosModel update(Long id, ServicosRequestDTO servicoDTO) {
         ServicosModel servico = servicosRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
@@ -51,7 +49,6 @@ public class ServicosService {
         servico.setPreco(servicoDTO.getPreco());
         servico.setTitulo(servicoDTO.getTitulo());
         servico.setCategoria(servicoDTO.getCategoria());
-        // ✅ CORRIGIDO: NÃO atualiza datacriacao (mantém a data original)
 
         return servicosRepository.save(servico);
     }
@@ -60,13 +57,10 @@ public class ServicosService {
         return servicosRepository.findAll();
     }
 
-    // ✅ CORRIGIDO: Usa os novos métodos do repository
     public List<ServicosModel> findAllOrderByNota(boolean ascending) {
-        if (ascending) {
-            return servicosRepository.findAllByOrderByNotaAsc();
-        } else {
-            return servicosRepository.findAllByOrderByNotaDesc();
-        }
+        return ascending
+                ? servicosRepository.findAllByOrderByNotaAsc()
+                : servicosRepository.findAllByOrderByNotaDesc();
     }
 
     public ServicosModel findById(Long id) {
@@ -87,18 +81,22 @@ public class ServicosService {
     }
 
     public boolean deleteById(Long id) {
-        if (!servicosRepository.existsById(id)) {
-            return false;
-        }
+        if (!servicosRepository.existsById(id)) return false;
         servicosRepository.deleteById(id);
         return true;
     }
 
-    public ServicosModel updateNota(Long id, Double nota) {
-        ServicosModel servico = findById(id);
-        if (nota < 0 || nota > 10) {
-            throw new IllegalArgumentException("Nota deve estar entre 0 e 10");
+   
+    public ServicosModel updateNota(Long id, BigDecimal nota) {
+        if (nota == null) {
+            throw new IllegalArgumentException("Nota é obrigatória");
         }
+
+        if (nota.compareTo(BigDecimal.ZERO) < 0 || nota.compareTo(new BigDecimal("5")) > 0) {
+            throw new IllegalArgumentException("Nota deve estar entre 0 e 5");
+        }
+
+        ServicosModel servico = findById(id);
         servico.setNota(nota);
         return servicosRepository.save(servico);
     }
