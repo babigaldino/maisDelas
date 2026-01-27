@@ -63,10 +63,10 @@ public class UsuarioModel {
     @Column(name = "cidade", length = 100, nullable = false)
     private String cidade = "Recife";
 
-    @Column(name = "latitude", columnDefinition = "DECIMAL(10, 8)")
+    @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "longitude", columnDefinition = "DECIMAL(11, 8)")
+    @Column(name = "longitude")
     private Double longitude;
 
     @Column(name = "data_criacao", nullable = false, updatable = false)
@@ -82,8 +82,7 @@ public class UsuarioModel {
     @Column(name = "bio", length = 500)
     private String bio;
 
-    // ✅ NOVO: Campo para média calculada da prestadora
-    @Column(name = "nota", columnDefinition = "DECIMAL(3, 2) DEFAULT 0.0")
+    @Column(name = "nota", precision = 3, scale = 2)
     private Double nota = 0.0;
 
     @ElementCollection(fetch = FetchType.LAZY)

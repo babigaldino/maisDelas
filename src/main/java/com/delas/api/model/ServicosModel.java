@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "servicos", indexes = {
-    @Index(name = "idx_servicos_usuario_id", columnList = "usuario_id"),
-    @Index(name = "idx_servicos_categoria", columnList = "categoria")
+        @Index(name = "idx_servicos_usuario_id", columnList = "usuario_id"),
+        @Index(name = "idx_servicos_categoria", columnList = "categoria")
 })
 @Getter
 @Setter
@@ -51,8 +51,7 @@ public class ServicosModel {
     @JsonBackReference
     private UsuarioModel usuario;
 
-    
-    @Column(name = "nota", columnDefinition = "NUMERIC(3,2) DEFAULT 0.0")
+    @Column(name = "nota", precision = 3, scale = 2)
     private Double nota = 0.0;
 
     @PrePersist
@@ -60,7 +59,7 @@ public class ServicosModel {
         if (this.datacriacao == null) {
             this.datacriacao = LocalDateTime.now();
         }
-        
+
         if (this.nota == null) {
             this.nota = 0.0;
         }
