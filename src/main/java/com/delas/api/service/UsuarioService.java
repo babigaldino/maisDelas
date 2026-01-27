@@ -1,6 +1,7 @@
 package com.delas.api.service;
 
 import com.delas.api.dto.UsuarioRequestDTO;
+import com.delas.api.dto.UsuarioUpdateDTO; // ✅ ADICIONE
 import com.delas.api.model.UsuarioModel;
 import com.delas.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,11 +72,31 @@ public class UsuarioService {
         usuario.setCidade(usuarioDTO.getCidade() != null ? usuarioDTO.getCidade() : "Recife");
         usuario.setLatitude(usuarioDTO.getLatitude());
         usuario.setLongitude(usuarioDTO.getLongitude());
-       
 
         return usuarioRepository.save(usuario);
     }
 
+    // ✅ NOVO MÉTODO: Atualizar perfil (sem senha e tipo)
+    public UsuarioModel atualizarPerfil(Long id, UsuarioUpdateDTO dto) {
+        UsuarioModel usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+        usuario.setTelefone(dto.getTelefone());
+        usuario.setRua(dto.getRua());
+        usuario.setBairro(dto.getBairro());
+        usuario.setCep(dto.getCep());
+        
+        // ✅ Atualiza bio se não for null
+        if (dto.getBio() != null) {
+            usuario.setBio(dto.getBio());
+        }
+
+        return usuarioRepository.save(usuario);
+    }
+
+    // ✅ MÉTODO ANTIGO: Mantém para outros usos (se necessário)
     public UsuarioModel atualizarUsuario(Long id, UsuarioRequestDTO usuarioDTO) {
         UsuarioModel usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

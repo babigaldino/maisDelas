@@ -1,6 +1,7 @@
 package com.delas.api.controller;
 
 import com.delas.api.dto.UsuarioRequestDTO;
+import com.delas.api.dto.UsuarioUpdateDTO; 
 import com.delas.api.dto.UsuarioResponseDTO;
 import com.delas.api.model.ServicosModel;
 import com.delas.api.model.UsuarioModel;
@@ -39,7 +40,7 @@ public class UsuarioController {
                 .map(usuario -> {
                     UsuarioResponseDTO dto = UsuarioResponseDTO.fromModel(usuario);
                     
-                    // ✅ ADICIONA SERVIÇOS se for PRESTADOR
+                    
                     if (usuario.getTipo() == UsuarioModel.TipoUsuario.PRESTADOR) {
                         List<ServicosModel> servicos = servicosRepository.findByUsuarioId(usuario.getId());
                         dto.setServicos(servicos);
@@ -61,7 +62,7 @@ public class UsuarioController {
                     .map(usuario -> {
                         UsuarioResponseDTO dto = UsuarioResponseDTO.fromModel(usuario);
                         
-                        // ✅ ADICIONA SERVIÇOS se for PRESTADOR
+                        
                         if (usuario.getTipo() == UsuarioModel.TipoUsuario.PRESTADOR) {
                             List<ServicosModel> servicos = servicosRepository.findByUsuarioId(usuario.getId());
                             dto.setServicos(servicos);
@@ -77,12 +78,13 @@ public class UsuarioController {
         }
     }
 
+   
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> updateUsuario(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDTO usuarioDetails) {
+            @Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) { 
         try {
-            UsuarioModel usuario = usuarioService.atualizarUsuario(id, usuarioDetails);
+            UsuarioModel usuario = usuarioService.atualizarPerfil(id, usuarioUpdateDTO); 
             return ResponseEntity.ok(UsuarioResponseDTO.fromModel(usuario));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(null);
