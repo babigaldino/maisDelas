@@ -10,11 +10,13 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "servicos", indexes = {
-        @Index(name = "idx_servicos_usuario_id", columnList = "usuario_id"),
-        @Index(name = "idx_servicos_categoria", columnList = "categoria")
+    @Index(name = "idx_servicos_usuario_id", columnList = "usuario_id"),
+    @Index(name = "idx_servicos_categoria", columnList = "categoria")
 })
 @Getter
 @Setter
@@ -51,15 +53,24 @@ public class ServicosModel {
     @JsonBackReference
     private UsuarioModel usuario;
 
-   @Column(name = "nota", precision = 3, scale = 2)
+    @Column(name = "nota", precision = 3, scale = 2)
     private BigDecimal nota = BigDecimal.ZERO;
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+        name = "servico_fotos",
+        joinColumns = @JoinColumn(name = "servico_id")
+    )
+    @Column(name = "url", columnDefinition = "TEXT")
+    @Size(max = 3, message = "Máximo 3 fotos por serviço.")
+    private List<String> fotos = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         if (this.datacriacao == null) {
             this.datacriacao = LocalDateTime.now();
         }
-
         if (this.nota == null) {
             this.nota = BigDecimal.ZERO;
         }
