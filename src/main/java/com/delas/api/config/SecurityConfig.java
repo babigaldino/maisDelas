@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -36,9 +37,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers("GET", "/servicos").permitAll()
-                        .requestMatchers("GET", "/usuario/**").permitAll()  
-                        .requestMatchers("GET", "/geocode/**").permitAll() 
+                        .requestMatchers(HttpMethod.GET, "/servicos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()  
+                        .requestMatchers(HttpMethod.GET, "/geocode/**").permitAll()
                         
                     
                         .requestMatchers("/favorito/**").permitAll()  
