@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +23,9 @@ public class ServicosResponseDTO {
     private LocalDateTime datacriacao;
     private String categoria;
     private BigDecimal nota;
+
+    
+    private List<String> fotos = new ArrayList<>();
 
     private UsuarioSimplificadoDTO usuario;
 
@@ -43,7 +48,10 @@ public class ServicosResponseDTO {
         dto.setTitulo(servico.getTitulo());
         dto.setDatacriacao(servico.getDatacriacao());
         dto.setCategoria(servico.getCategoria());
-        dto.setNota(servico.getNota()); // BigDecimal direto
+        dto.setNota(servico.getNota());
+
+       
+        dto.setFotos(servico.getFotos() == null ? new ArrayList<>() : servico.getFotos());
 
         if (servico.getUsuario() != null) {
             UsuarioSimplificadoDTO usuarioDTO = new UsuarioSimplificadoDTO();
