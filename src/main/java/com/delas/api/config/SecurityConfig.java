@@ -35,20 +35,17 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
+                                "/swagger-ui.html")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/servicos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()  
-                        .requestMatchers(HttpMethod.GET, "/geocode/**").permitAll()
-                        
-                    
-                        .requestMatchers("/favorito/**").permitAll()  
-                        
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/geocode", "/geocode/**").permitAll()
+
+                        .requestMatchers("/favorito/**").permitAll()
+
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -61,7 +58,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
