@@ -36,12 +36,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        // ✅ Libera rotas públicas
                         .requestMatchers("GET", "/servicos").permitAll()
-                        .requestMatchers("GET", "/usuario/**").permitAll()  // ✅ ADICIONE
+                        .requestMatchers("GET", "/usuario/**").permitAll()  
+                        .requestMatchers("GET", "/geocode/**").permitAll() 
                         
                     
-                        .requestMatchers("/favorito/**").permitAll()  // ✅ ADICIONE
+                        .requestMatchers("/favorito/**").permitAll()  
                         
                         .anyRequest().authenticated()
                 )
