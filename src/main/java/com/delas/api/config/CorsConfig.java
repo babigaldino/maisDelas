@@ -12,43 +12,31 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // ✅ ORIGENS PERMITIDAS (desenvolvimento + produção)
-        configuration.addAllowedOrigin("http://localhost:3000");      // Vite default
-        configuration.addAllowedOrigin("http://localhost:5173");      // Vite alt
-        configuration.addAllowedOrigin("http://127.0.0.1:5173");      // localhost alt
-        configuration.addAllowedOrigin("http://localhost:8080");      // Backend local
-        // configuration.addAllowedOrigin("https://seu-dominio.com"); // Produção (descomente)
-        
-        // ✅ MÉTODOS HTTP
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://127.0.0.1:5173");
+        configuration.addAllowedOrigin("https://mais-delas-front.vercel.app"); 
+
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedMethod("PUT");
         configuration.addAllowedMethod("DELETE");
         configuration.addAllowedMethod("PATCH");
         configuration.addAllowedMethod("OPTIONS");
-        
-        // ✅ HEADERS PERMITIDOS (crítico para JWT!)
-        configuration.addAllowedHeader("Authorization");  // JWT no header
-        configuration.addAllowedHeader("Content-Type");   // application/json
+
+        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedHeader("Content-Type");
         configuration.addAllowedHeader("Accept");
-        configuration.addAllowedHeader("X-Requested-With");
-        configuration.addAllowedHeader("*");              // Aceita qualquer header
-        
-        // ✅ HEADERS EXPOSTOS (frontend consegue ler)
+
         configuration.addExposedHeader("Authorization");
-        configuration.addExposedHeader("Content-Type");
-        
-        // ✅ CREDENCIAIS (importante para cookies + JWT)
-        configuration.setAllowCredentials(true);
-        
-        // ✅ CACHE DO PREFLIGHT (1 hora = 3600 segundos)
+
+        configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
-        
-        // ✅ APLICAR EM TODOS OS ENDPOINTS
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        
         return source;
     }
+
 }
