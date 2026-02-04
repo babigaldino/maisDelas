@@ -16,7 +16,7 @@ public class CorsConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
-        configuration.addAllowedOrigin("https://mais-delas-front.vercel.app"); 
+        configuration.addAllowedOrigin("https://maisdelas.vercel.app"); 
 
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
