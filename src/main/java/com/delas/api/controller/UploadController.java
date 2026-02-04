@@ -57,6 +57,41 @@ public class UploadController {
     return ResponseEntity.ok(Map.of("url", url));
   }
 
+  @DeleteMapping("/usuario/{id}/foto")
+public ResponseEntity<?> removerFotoPerfil(@PathVariable Long id) {
+  UsuarioModel user = usuarioRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+  user.setFoto(null);
+  usuarioRepository.save(user);
+
+  return ResponseEntity.noContent().build();
+}
+
+@DeleteMapping("/servicos/{id}/fotos")
+public ResponseEntity<?> removerFotoServico(
+    @PathVariable Long id,
+    @RequestParam("url") String url
+) {
+  ServicosModel servico = servicosRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+
+  List<String> fotos = servico.getFotos();
+  if (fotos == null || fotos.isEmpty()) {
+    return ResponseEntity.notFound().build();
+  }
+
+  boolean removed = fotos.remove(url);
+  if (!removed) {
+    return ResponseEntity.notFound().build();
+  }
+
+  servico.setFotos(fotos);
+  servicosRepository.save(servico);
+
+  return ResponseEntity.ok(servico.getFotos());
+}
+
   @PostMapping(
       value = "/servicos/{id}/fotos",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE
