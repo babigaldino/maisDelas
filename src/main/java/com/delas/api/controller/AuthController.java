@@ -175,7 +175,7 @@ public class AuthController {
 
             // rota do FRONT (página) que vai receber o token e chamar
             // validateResetToken/resetPassword
-            String resetLink = "https://maisdelas.vercel.app/reset-password?token=" + token; 
+            String resetLink = "https://maisdelas.vercel.app/reset-senha?token=" + token; 
             emailService.sendRecoveryEmail(email, resetLink);
             return ResponseEntity.ok("E-mail de recuperação enviado.");
         } catch (Exception e) {
