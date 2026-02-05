@@ -11,7 +11,6 @@ import com.delas.api.service.EmailService;
 import com.delas.api.service.UsuarioService;
 import com.delas.api.repository.UsuarioRepository;
 import com.delas.api.service.TokenRedefinicaoSenhaService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,16 +168,14 @@ public class AuthController {
             return ResponseEntity.status(404).body("Usuário não encontrado.");
         }
 
-        // Geração do token
         String token = UUID.randomUUID().toString();
         tokenRedefinicaoSenhaService.gerarToken(usuario, token);
 
         try {
             emailService.sendRecoveryEmail(email, token);
-        } catch (MessagingException e) {
+            return ResponseEntity.ok("E-mail de recuperação enviado.");
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao enviar e-mail de recuperação.");
         }
-
-        return ResponseEntity.ok("E-mail de recuperação enviado.");
     }
 }
