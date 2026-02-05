@@ -172,7 +172,11 @@ public class AuthController {
         tokenRedefinicaoSenhaService.gerarToken(usuario, token);
 
         try {
-            emailService.sendRecoveryEmail(email, token);
+
+            // rota do FRONT (página) que vai receber o token e chamar
+            // validateResetToken/resetPassword
+            String resetLink = "https://maisdelas.vercel.app/reset-password?token=" + token; 
+            emailService.sendRecoveryEmail(email, resetLink);
             return ResponseEntity.ok("E-mail de recuperação enviado.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao enviar e-mail de recuperação.");
