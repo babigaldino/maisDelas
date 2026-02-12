@@ -2,7 +2,7 @@ package com.delas.api.config;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
+import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
@@ -12,11 +12,15 @@ import org.springframework.stereotype.Component;
 @Component  // Adiciona a anotação @Component para registrar como bean do Spring
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "your_very_secret_and_long_key_that_is_256_bits_long"; // Exemplo de chave longa com 256 bits
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.expiration}")
+    private Long EXPIRATION_TIME;
 
 
     // Método para gerar o token JWT
-    public static String generateToken(String email) {
+    public  String generateToken(String email) {
         SecretKey key = new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
         return Jwts.builder()
                 .setSubject(email)

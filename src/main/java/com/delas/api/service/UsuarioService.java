@@ -46,11 +46,7 @@ public class UsuarioService {
     }
 
     public UsuarioModel salvarUsuario(UsuarioRequestDTO usuarioDTO) {
-        // if (!cpfValido(usuarioDTO.getCpf())) {
-        //     throw new IllegalArgumentException("CPF inválido!");
-        // }
-
-        // Validação de usuário duplicado
+    
         if (usuarioRepository.existsByEmail(usuarioDTO.getEmail())) {
             throw new RuntimeException("Email já cadastrado");
         }
