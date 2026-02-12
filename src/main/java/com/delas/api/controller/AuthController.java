@@ -119,7 +119,7 @@ public class AuthController {
                 return ResponseEntity.status(401).body("Credenciais inválidas.");
             }
 
-            String token = JwtUtil.generateToken(loginDTO.getEmail());
+            String token = jwtUtil.generateToken(loginDTO.getEmail());
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
