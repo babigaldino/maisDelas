@@ -44,13 +44,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/servicos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()
 
                         // ✅ geocode (exato e subpaths)
                         .requestMatchers(HttpMethod.GET, "/geocode", "/geocode/", "/geocode/**").permitAll()
-
-                        .requestMatchers("/favorito/**").permitAll()
 
                         .anyRequest().authenticated());
 
