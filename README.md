@@ -1,123 +1,172 @@
-# Projeto_Start_+delas
+## 🌸 +Delas — Backend API
 
-## Descrição Geral do Sistema - +delas
+API backend do **+Delas**, uma plataforma criada para **conectar mulheres prestadoras de serviços a clientes**, promovendo autonomia financeira, flexibilidade e visibilidade profissional.
 
-## Problemática
-Atualmente, as mulheres enfrentam grandes desafios no mercado de trabalho, pela falta de oportunidades, desigualdade de gênero ou falta de visibilidade. Muitas mulheres têm dificuldade em acessar vagas de emprego, crescer profissionalmente ou se manter em uma escala de trabalho que não é mais compatível quando se tem filhos. Diante deste cenário, a +delas surge como uma resposta para combater esses problemas, criando um espaço que facilita a autonomia financeira e pessoal das mulheres, oferecendo-lhes oportunidades para se destacarem em suas áreas de atuação.
+Este repositório representa a **nova versão do backend**, reestruturada com foco em **boas práticas, segurança, escalabilidade e deploy em nuvem**.
 
-## Solução
-A plataforma +delas será um site que conecta mulheres prestadoras de serviços autônomos a pessoas que desejam contratar esses serviços. As mulheres terão a liberdade de escolher o dia e a hora em que desejam trabalhar, desde que haja uma negociação feita com o contratante que deseja o serviço da mesma. O sistema permitirá que elas definam suas áreas de atuação, horários disponíveis e condições de trabalho, promovendo a autonomia e flexibilidade. Além disso, a +delas tem como visão atrair mulheres desempregadas, aumentando suas oportunidades de geração de renda e contribuindo para o crescimento da economia local.
+---
 
+## 🎯 Propósito do Projeto
 
-## Com a nossa plataforma conseguiremos aumentar o desenvolvimento econômico e pessoal:
-Oferecendo oportunidades para que as mulheres possam ter uma autonomia financeira, um ambiente voltado para a educação e gerenciamento de renda e expandir suas habilidades e conexões profissionais.
+O +Delas nasce para enfrentar problemas reais vividos por mulheres no mercado de trabalho, como:
 
-Empoderamento Pessoal:
-Promover a confiança e a autoestima das mulheres, incentivando-as a alcançar seus objetivos.
+* Falta de oportunidades e visibilidade
+* Dificuldade de conciliar trabalho e maternidade
+* Dependência de horários rígidos e modelos tradicionais de emprego
 
-Autonomia: Proporcionar às mulheres a capacidade de gerenciar seu próprio tempo e trabalho, aumentando sua independência financeira de acordo com sua rotina e limitações.
+A plataforma permite que mulheres **divulguem seus serviços**, **gerenciem sua disponibilidade** e **negociem diretamente com clientes**, fortalecendo a economia local e o empoderamento feminino.
 
-## Cadastro.
-A usuária se cadastra com informações básicas (nome, e-mail, área de atuação) e cria uma senha.
+---
 
-## Jornada do empreemdedor (Caso seja prestadora) (Opcional).
-A usuária acessa uma seção chamada Jornada do Empreendedor, com conteúdos rápidos e essenciais, por exemplo:
-- Como se comunicar com seus clientes, Auto-Divulgação, Precificação de Serviços e assusntos voltados a educação financeira.
-- Tarefa Prática: Ao final de cada resumo, ela realiza um quiz sobre o resumo, e no final, registra o seu serviço utilizando o que foi visto na trilha.
-(Vamos usar essa tarefa da trilha como o nosso default pra definir a avaliação inicial pra quem não tem nenhum serviço prestado)
+## 🚀 Stack Tecnológica
 
-## Criação de perfil. 
-- Perfil básico: A usuária monta um perfil com as informações obtidas nas atividades da trilha.
+* **Java 17+**
+* **Spring Boot**
 
-## Agendamento e contratação.
-- Agendamento facilitado: Assim que um cliente encontra o serviço desejado e prestadora, ele entra em contato com a mesma através do botão do whatsapp para definir o melhor horário para ambos.
+  * Spring Web
+  * Spring Data JPA
+  * Spring Security
+* **PostgreSQL**
+* **JWT** (autenticação baseada em token)
+* **Maven**
+* **Swagger / SpringDoc** (documentação da API)
+* **Docker** (ambiente local e produção)
+* **Cloudinary** (upload de imagens)
+* **Brevo (Sendinblue)** (envio de e-mails)
+* **Deploy:** Render / Railway / similares
 
-## Avaliação e feedback.
-- Após a prestação do serviço, o cliente tem a opção de avaliar a usuária, adicionando uma nota ou comentário curto.
-- Perfil Atualizado: A avaliação aparece no perfil da usuária, ajudando a construir sua reputação e atrair novos clientes.
+---
 
-## 🚀 Como Rodar o Aplicativo  
+## 🧱 Arquitetura do Projeto
 
-Para executar o projeto localmente utilizando Docker, siga os passos abaixo:  
+```
+src/
+ └── main/
+     ├── java/
+     │   └── com.example.maisdelas/
+     │       ├── controller/   # Endpoints REST
+     │       ├── service/      # Regras de negócio
+     │       ├── repository/   # Persistência de dados
+     │       ├── model/        # Entidades JPA
+     │       ├── dto/          # DTOs
+     │       └── security/     # JWT e configurações de segurança
+     └── resources/
+         └── application.properties
+```
 
-1. Certifique-se de ter o [Docker](https://www.docker.com/) e o [Maven](https://maven.apache.org/) instalados em sua máquina.  
-2. No diretório raiz do projeto, execute o seguinte comando para limpar e empacotar a aplicação:  
-   mvn clean package
-Em seguida, construa e inicie os contêineres Docker com o comando:
-bash
-docker compose up --build
+> 🔐 Todas as credenciais e segredos são fornecidos **exclusivamente via variáveis de ambiente**.
 
-### 🏆 Principais Tecnologias  
+---
 
-- **Java**: Linguagem de programação principal utilizada no backend.  
-- **Spring Boot**: Framework para desenvolvimento rápido de aplicações Java.  
-- **Spring Security**: Implementação de autenticação e autorização no backend.  
-- **React**: Framework JavaScript para construção do frontend dinâmico e responsivo.  
-- **Docker**: Gerenciamento de contêineres para simplificar a execução do projeto.  
-- **Swagger**: Documentação interativa da API REST.
+## 🔐 Autenticação e Segurança
 
-- ## Fluxos de dados.
-- Os diagramas abaixo representam os principais fluxos operacionais da plataforma +delas, detalhando tanto a experiência dos usuários (clientes e prestadoras de serviços) quanto as conexões internas entre as entidades do banco de dados, desde o cadastro até a finalização do serviço contratado.
+* Autenticação via **JWT**
+* Rotas protegidas exigem o header:
 
-![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/+Delas%20(3).jpg?raw=true)
+```http
+Authorization: Bearer <TOKEN_JWT>
+```
 
-- ## Fluxos de dados da contratação do serviço.
-  
- ![Fluxo de dados de cadastro ](https://github.com/babil0nia/maisDelas/blob/master/%2BDelas%20Contrata%C3%A7%C3%A3o.jpg)
+* Tokens possuem tempo de expiração configurável
 
-  
-## Banco de dados
-```mermaid
-erDiagram
-    usuarios {
-        int id PK
-        string nome
-        string email
-        string senha
-        string telefone
-        enum tipo
-        string rua
-        string bairro
-        int cep
-        string cpf
-        timestamp datacriacao
-    }
-    
-    favorito {
-        int idfavorito PK
-        int idclientefavoritou
-        int idprestadorfavorito
-        datetime datafavoritamento
-    }
-    
-    servicos {
-        int idservicos PK
-        text descricao
-        decimal preco
-        string titulo
-        timestamp datacriacao
-        string categoria
-        int idfavorito
-    }
-    
-    contratacao {
-        int idcontratacao PK
-        int usuarios_id
-        int idservicos
-        string status
-        timestamp datacontratacao
-        text comentarios
-    }
-    
-    avaliacao {
-        int idavaliacao PK
-        int idcontratacao
-        int nota
-    }
+---
 
-    usuarios ||--o{ favorito : "idclientefavoritou"
-    usuarios ||--o{ favorito : "idprestadorfavorito"
-    favorito ||--o{ servicos : "idfavorito"
-    usuarios ||--o{ contratacao : "usuarios_id"
-    servicos ||--o{ contratacao : "idservicos"
-    contratacao ||--o{ avaliacao : "idcontratacao"
+## ▶️ Executando o Projeto Localmente
+
+### Pré-requisitos
+
+* Java 17+
+* Maven ou Maven Wrapper (`./mvnw`)
+* PostgreSQL (ou banco via Docker)
+
+---
+
+### Variáveis de Ambiente
+
+Configure as seguintes variáveis no seu sistema ou arquivo `.env`:
+
+```env
+DB_URL=jdbc:postgresql://HOST:5432/DB
+DB_USER=USER
+DB_PASSWORD=PASSWORD
+
+JWT_SECRET=uma_chave_segura
+JWT_EXPIRATION=3600000
+
+BREVO_API_KEY=xxxx
+FROM_EMAIL=contato@maisdelas.com
+FROM_NAME=+Delas
+
+CLOUDINARY_API_KEY=xxxx
+CLOUDINARY_API_SECRET=xxxx
+CLOUDINARY_CLOUD_NAME=xxxx
+
+PORT=8080
+```
+
+---
+
+A aplicação ficará disponível em:
+
+```
+http://localhost:8080
+```
+
+---
+
+## 📘 Documentação da API
+
+Após subir o projeto, acesse:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+---
+
+## 🗄️ Modelo de Dados (Resumo)
+
+* Usuários (clientes e prestadoras)
+* Serviços
+* Contratações
+* Avaliações
+* Favoritos
+
+O relacionamento entre entidades segue um modelo relacional focado em **contratação direta e reputação baseada em avaliações**.
+
+---
+
+## 🧪 Boas Práticas Adotadas
+
+* ❌ Nenhuma credencial versionada
+* ✅ Configuração por variáveis de ambiente
+* ✅ Separação clara de camadas (Controller / Service / Repository)
+* ✅ DTOs para entrada e saída de dados
+* ❌ `target/` ignorado no versionamento
+
+---
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch:
+
+```bash
+git checkout -b feature/minha-feature
+```
+
+3. Commit suas alterações:
+
+```bash
+git commit -m "Minha feature"
+```
+
+4. Push:
+
+```bash
+git push origin feature/minha-feature
+```
+
+5. Abra um Pull Request 🚀
+
+---
